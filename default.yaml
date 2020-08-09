@@ -8,297 +8,296 @@ heart_speed:
 # If you don't care about some sprites, you can remove the corresponding line
 # This corresponds to the sprites list available on https://alttpr.com/en/sprite_preview
 sprite:
-    link: 1
-    four swords link: 0
-    abigail: 0
-    adol: 0
-    aggretsuko: 0
-    alice: 0
-    angry video game nerd: 0
-    arcane: 0
-    ark: 0
-    arrghus: 0
-    astronaut: 0
-    badeline: 0
-    bananas in pyjamas: 0
-    bandit: 0
-    batman: 0
-    beau: 0
-    bewp: 0
-    big key: 0
-    birb: 0
-    birdo: 0
-    black mage: 0
-    blacksmith link: 0
-    blossom: 0
-    bob: 0
-    boo 2: 0
-    boo: 0
-    bottle: 0 # Bottle o' Goo, but apostrophe was a problem
-    botw zelda: 0
-    bowser: 0
-    branch: 0
-    brian: 0
-    broccoli: 0
-    bronzor: 0
-    b.s. boy: 0
-    b.s. girl: 0
-    bubbles: 0
-    bullet bill: 0
-    buttercup: 0
-    cactuar: 0
-    cadence: 0
-    carlsagan42: 0
-    casual zelda: 0
-    marvin the cat: 0
-    cat boo: 0
-    cd-i link: 0
-    celes: 0
-    charizard: 0
-    cheep cheep: 0
-    chibity: 0
-    cirno: 0
-    clifford: 0
-    clyde: 0
-    conker: 0
-    cornelius: 0
-    corona: 0
-    cucco: 0
-    cursor: 0
-    d.owls: 0
-    dark panda: 0
-    dark boy: 0
-    dark girl: 0
-    dark link (tunic): 0
-    dark link: 0
-    dark swatchy: 0
-    dark zelda: 0
-    dark zora: 0
-    deadpool (mythic): 0
-    deadpool (sirczah): 0
-    deadrock: 0
-    decidueye: 0
-    demon link: 0
-    dragonite: 0
-    drake the dragon: 0
-    eggplant: 0
-    emosaru: 0
-    ezlo: 0
-    fierce deity link: 0
-    finn merten: 0
-    finny bear: 0
-    floodgate fish: 0
-    flavor guy: 0
-    fox link: 0
-    freya crescent: 0
-    frisk: 0
-    frog link: 0
-    fujin: 0
-    future trunks: 0
-    gamer: 0
-    mini ganon: 0
-    ganondorf: 0
-    garfield: 0
-    garnet: 0
-    garo master: 0
-    gbc link: 0
-    geno: 0
-    gobli: 0
-    goomba: 0
-    goose: 0
-    grandpoobear: 0
-    gruncle stan: 0
-    guiz: 0
-    hardhat beetle: 0
-    hat kid: 0
-    headless link: 0
-    hello kitty: 0
-    hidari: 0
-    hint tile: 0
-    hitsuyan1337: 0
-    hoarder (bush): 0
-    hoarder (pot): 0
-    hoarder (rock): 0
-    homer simpson: 0
-    hyrule knight: 0
-    ibazly: 0
-    ignignokt: 0
-    informant woman: 0
-    inkling: 0
-    invisible link: 0
-    jack frost: 0
-    jason frudnick: 0
-    jasp: 0
-    jogurt: 0
-    katsura: 0
-    kecleon: 0
-    kenny mccormick: 0
-    ketchup: 0
-    kholdstare: 0
-    king gothalion: 0
-    king graham: 0
-    kirby: 0
-    kore8: 0
-    lakitu: 0
-    lapras: 0
-    lest: 0
-    lily: 0
-    linja: 0
-    hat color link: 0
-    tunic color link: 0
-    pony: 0
-    figaro merchant: 0
-    lucario: 0
-    luigi: 0
-    madeline: 0
-    magus: 0
-    maiden: 0
-    mallow (cat): 0
-    manga link: 0
-    maple queen: 0
-    marin: 0
-    mario (classic): 0
-    mario and cappy: 0
-    tanooki mario: 0
-    marisa kirisame: 0
-    matthias: 0
-    meatwad: 0
-    medallions: 0
-    medli: 0
-    megaman x: 0
-    baby metroid: 0
-    mewlp: 0
-    mike jones: 0
-    minish link: 0
-    minish cap link: 0
+    Link: 0
+    Four Swords Link: 0
+    Abigail: 0
+    Adol: 0
+    Aggretsuko: 0
+    Alice: 0
+    Angry Video Game Nerd: 0
+    Arcane: 0
+    Ark: 0
+    Arrghus: 0
+    Astronaut: 0
+    Badeline: 0
+    Bananas In Pyjamas: 0
+    Bandit: 0
+    Batman: 0
+    Beau: 0
+    Bewp: 0
+    Big Key: 0
+    Birb: 0
+    Birdo: 0
+    Black Mage: 0
+    Blacksmith Link: 0
+    Blossom: 0
+    Bob: 0
+    Boo 2: 0
+    Boo: 0
+    Bottle o' Goo: 0
+    BotW Zelda: 0
+    Bowser: 0
+    Branch: 0
+    Brian: 0
+    Broccoli: 0
+    Bronzor: 0
+    B.S. Boy: 0
+    B.S. Girl: 0
+    Bubbles: 0
+    Bullet Bill: 0
+    Buttercup: 0
+    Cactuar: 0
+    Cadence: 0
+    CarlSagan42: 0
+    Casual Zelda: 0
+    Marvin the Cat: 0
+    Cat Boo: 0
+    CD-i Link: 0
+    Celes: 0
+    Charizard: 0
+    Cheep Cheep: 0
+    Chibity: 0
+    Cirno: 0
+    Clifford: 0
+    Clyde: 0
+    Conker: 0
+    Cornelius: 0
+    Corona: 0
+    Cucco: 0
+    Cursor: 0
+    D.Owls: 0
+    Dark Panda: 0
+    Dark Boy: 0
+    Dark Girl: 0
+    Dark Link (Tunic): 0
+    Dark Link: 0
+    Dark Swatchy: 0
+    Dark Zelda: 0
+    Dark Zora: 0
+    Deadpool (Mythic): 0
+    Deadpool (SirCzah): 0
+    Deadrock: 0
+    Decidueye: 0
+    Demon Link: 0
+    Dragonite: 0
+    Drake The Dragon: 0
+    Eggplant: 0
+    EmoSaru: 0
+    Ezlo: 0
+    Fierce Deity Link: 0
+    Finn Merten: 0
+    Finny Bear: 0
+    Floodgate Fish: 0
+    Flavor Guy: 0
+    Fox Link: 0
+    Freya Crescent: 0
+    Frisk: 0
+    Frog Link: 0
+    Fujin: 0
+    Future Trunks: 0
+    Gamer: 0
+    Mini Ganon: 0
+    Ganondorf: 0
+    Garfield: 0
+    Garnet: 0
+    Garo Master: 0
+    GBC Link: 0
+    Geno: 0
+    Gobli: 0
+    Goomba: 0
+    Goose: 0
+    GrandPOOBear: 0
+    Gruncle Stan: 0
+    Guiz: 0
+    Hardhat Beetle: 0
+    Hat Kid: 0
+    Headless Link: 0
+    Hello Kitty: 0
+    Hidari: 0
+    Hint Tile: 0
+    Hitsuyan1337: 0
+    Hoarder (Bush): 0
+    Hoarder (Pot): 0
+    Hoarder (Rock): 0
+    Homer Simpson: 0
+    Hyrule Knight: 0
+    iBazly: 0
+    Ignignokt: 0
+    Informant Woman: 0
+    Inkling: 0
+    Invisible Link: 0
+    Jack Frost: 0
+    Jason Frudnick: 0
+    Jasp: 0
+    Jogurt: 0
+    Katsura: 0
+    Kecleon: 0
+    Kenny McCormick: 0
+    Ketchup: 0
+    Kholdstare: 0
+    King Gothalion: 0
+    King Graham: 0
+    Kirby: 0
+    Kore8: 0
+    Lakitu: 0
+    Lapras: 0
+    Lest: 0
+    Lily: 0
+    Linja: 0
+    Hat Color Link: 0
+    Tunic Color Link: 0
+    Pony: 0
+    Figaro Merchant: 0
+    Lucario: 0
+    Luigi: 0
+    Madeline: 0
+    Magus: 0
+    Maiden: 0
+    Mallow (Cat): 0
+    Manga Link: 0
+    Maple Queen: 0
+    Marin: 0
+    Mario (Classic): 0
+    Tanooki Mario: 0
+    Mario and Cappy: 0
+    Marisa Kirisame: 0
+    Matthias: 0
+    Meatwad: 0
+    Medallions: 0
+    Medli: 0
+    Megaman X: 0
+    Baby Metroid: 0
+    MewLp: 0
+    Mike Jones: 0
+    Minish Link: 0
+    Minish Cap Link: 0
     missingno: 0
-    modern link: 0
-    mog: 0
-    momiji inubashiri: 0
-    moosh: 0
-    mouse: 0
-    ms. paint dog: 0
-    power up with pride mushroom: 0
-    nature link: 0
-    navi: 0
-    navirou: 0
-    ned flanders: 0
-    negative link: 0
-    neosad: 0
-    nes link: 0
-    ness: 0
-    nia: 0
-    niko: 0
-    old man: 0
-    ori: 0
-    outline link: 0
-    parallel worlds link: 0
-    paula: 0
-    princess peach: 0
-    penguin link: 0
-    pete: 0
-    phoenix wright: 0
-    pikachu: 0
-    pink ribbon link: 0
-    piranha plant: 0
-    plague knight: 0
-    pokey: 0
-    popoi: 0
-    poppy: 0
-    porg knight: 0
-    powerpuff girl: 0
-    pride link: 0
-    primm: 0
-    princess bubblegum: 0
-    psyduck: 0
-    the pug: 0
-    purple chest: 0
-    pyro: 0
-    rainbow link: 0
-    remeer: 0
-    rick: 0
-    robo-link 9000: 0
-    rocko: 0
-    rottytops: 0
-    roy koopa: 0
-    rumia: 0
-    rydia: 0
-    ryu: 0
-    sailor moon: 0
-    saitama: 0
-    samus (super metroid): 0
-    samus: 0
-    samus (classic): 0
-    santa link: 0
-    scholar: 0
-    selan: 0
-    sevens1ns: 0
-    shadow: 0
-    shadow sakura: 0
-    shantae: 0
-    shuppet: 0
-    shy gal: 0
-    shy guy: 0
-    sighnwaive: 0
-    snes controller: 0
-    soda can: 0
-    solaire of astora: 0
-    hyrule soldier: 0
-    sonic the hedgehog: 0
-    sora: 0
-    sora (kh1): 0
-    squall: 0
-    squirrel: 0
-    squirtle: 0
-    stalfos: 0
-    stan: 0
-    static link: 0
-    stick man: 0
-    super bomb: 0
-    super bunny: 0
-    super meat boy: 0
-    swatchy: 0
-    tasbot: 0
-    tea time: 0
-    terra (esper): 0
-    tetra: 0
-    tgh: 0
-    thief: 0
-    thomcrow: 0
-    tile: 0
-    tingle: 0
-    tmnt: 0
-    toad: 0
-    toadette: 0
-    captain toadette: 0
-    totemlinks: 0
-    trogdor the burninator: 0
-    tp zelda: 0
-    twofaced: 0
-    ty the tasmanian tiger: 0
-    ultros: 0
-    valeera: 0
-    vanillalink: 0
-    vaporeon: 0
-    vegeta: 0
-    vera: 0
-    vitreous: 0
-    vivi: 0
-    vivian: 0
-    wario: 0
-    will: 0
-    wizzrobe: 0
-    wolf link (festive): 0
-    wolf link (tp): 0
-    yoshi: 0
-    yunica tovah: 0
-    zandra: 0
-    zebra unicorn: 0
-    zeckemyro: 0
-    zelda: 0
-    zero suit samus: 0
-    zora: 0
-    random: 0
+    Modern Link: 0
+    Mog: 0
+    Momiji Inubashiri: 0
+    Moosh: 0
+    Mouse: 0
+    Ms. Paint Dog: 0
+    Power Up with Pride Mushroom: 0
+    Nature Link: 0
+    Navi: 0
+    Navirou: 0
+    Ned Flanders: 0
+    Negative Link: 0
+    Neosad: 0
+    NES Link: 0
+    Ness: 0
+    Nia: 0
+    Niko: 0
+    Old Man: 0
+    Ori: 0
+    Outline Link: 0
+    Parallel Worlds Link: 0
+    Paula: 0
+    Princess Peach: 0
+    Penguin Link: 0
+    Pete: 0
+    Phoenix Wright: 0
+    Pikachu: 0
+    Pink Ribbon Link: 0
+    Piranha Plant: 0
+    Plague Knight: 0
+    Pokey: 0
+    Popoi: 0
+    Poppy: 0
+    Porg Knight: 0
+    Powerpuff Girl: 0
+    Pride Link: 0
+    Primm: 0
+    Princess Bubblegum: 0
+    Psyduck: 0
+    The Pug: 0
+    Purple Chest: 0
+    Pyro: 0
+    Rainbow Link: 0
+    Remeer: 0
+    Rick: 0
+    Robo-Link 9000: 0
+    Rocko: 0
+    Rottytops: 0
+    Roy Koopa: 0
+    Rumia: 0
+    Rydia: 0
+    Ryu: 0
+    Sailor Moon: 0
+    Saitama: 0
+    Samus (Super Metroid): 0
+    Samus: 0
+    Samus (Classic): 0
+    Santa Link: 0
+    Scholar: 0
+    Selan: 0
+    SevenS1ns: 0
+    Shadow: 0
+    Shadow Sakura: 0
+    Shantae: 0
+    Shuppet: 0
+    Shy Gal: 0
+    Shy Guy: 0
+    SighnWaive: 0
+    SNES Controller: 0
+    Soda Can: 0
+    Solaire of Astora: 0
+    Hyrule Soldier: 0
+    Sonic the Hedgehog: 0
+    Sora: 0
+    Sora (KH1): 0
+    Squall: 0
+    Squirrel: 0
+    Squirtle: 0
+    Stalfos: 0
+    Stan: 0
+    Static Link: 0
+    Stick Man: 0
+    Super Bomb: 0
+    Super Bunny: 0
+    Super Meat Boy: 0
+    Swatchy: 0
+    TASBot: 0
+    Tea Time: 0
+    Terra (Esper): 0
+    Tetra: 0
+    TGH: 0
+    Thief: 0
+    Thomcrow: 0
+    Tile: 0
+    Tingle: 0
+    TMNT: 0
+    Toad: 0
+    Toadette: 0
+    Captain Toadette: 0
+    TotemLinks: 0
+    Trogdor the Burninator: 0
+    TP Zelda: 0
+    TwoFaced: 0
+    Ty the Tasmanian Tiger: 0
+    Ultros: 0
+    Valeera: 0
+    VanillaLink: 0
+    Vaporeon: 0
+    Vegeta: 0
+    Vera: 0
+    Vitreous: 0
+    Vivi: 0
+    Vivian: 0
+    Wario: 0
+    Will: 0
+    Wizzrobe: 0
+    Wolf Link (Festive): 0
+    Wolf Link (TP): 0
+    Yoshi: 0
+    Yunica Tovah: 0
+    Zandra: 0
+    Zebra Unicorn: 0
+    Zeckemyro: 0
+    Zelda: 0
+    Zero Suit Samus: 0
+    Zora: 0
 menu_speed: # Only available when it's not a race ROM
     instant: 0
     fast: 0
@@ -315,6 +314,3 @@ background_music:
 quickswap: # Only available when it's not a race ROM
     on: 1
     off: 0
-palette_shuffle:
-    on: 0
-    off: 1
