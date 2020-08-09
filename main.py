@@ -17,10 +17,12 @@ def set_input(driver, ipt):
     driver.switch_to.active_element.send_keys(ipt)
     driver.switch_to.active_element.send_keys(Keys.RETURN)
     driver.switch_to.active_element.send_keys(Keys.TAB)
+    time.sleep(0.1)
 
 def set_checkbox(driver):
     driver.switch_to.active_element.send_keys(Keys.SPACE)
     driver.switch_to.active_element.send_keys(Keys.TAB)
+    time.sleep(0.1)
 
 def choose_setting(weights):
     l = []
@@ -65,12 +67,15 @@ race_rom = 'bg-info' in driver.find_element(By.XPATH, "//div[@id='seed-details']
 # Skip things : navbar, ads and buttons
 
 driver.find_element(By.TAG_NAME, 'body').send_keys(Keys.TAB)
-for _ in range(6): # Navbar
+while 'nav' in driver.switch_to.active_element.get_attribute('class'): # Navbar
     driver.switch_to.active_element.send_keys(Keys.TAB)
+    time.sleep(0.1)
 while driver.switch_to.active_element.get_attribute('name') != '': # Ads
     driver.switch_to.active_element.send_keys(Keys.TAB)
+    time.sleep(0.1)
 for _ in range(2): # Buttons
     driver.switch_to.active_element.send_keys(Keys.TAB)
+    time.sleep(0.1)
 
 # Apply settings
 
@@ -89,7 +94,7 @@ if driver.switch_to.active_element.is_selected() != palette_shuffle:
 
 # Download the seed and close browser
 
+time.sleep(1)
 driver.find_element(By.CLASS_NAME, 'btn-success').click()
-
 time.sleep(5)
 driver.close()
