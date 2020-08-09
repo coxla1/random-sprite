@@ -54,7 +54,10 @@ async def random_sprite():
         quickswap=quickswap,
         menu_speed=menu_speed
     )
-
+    
+    if not os.path.isdir('output'):
+        os.mkdir('output')
+    
     await pyz3r.rom.write(patched_rom, 'output/' + hash + '.sfc')
 
     if os.name == 'nt':
