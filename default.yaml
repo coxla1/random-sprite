@@ -1,4 +1,9 @@
+# Your ROM file, should be in the same directory as run.bat
 rompath: "Zelda no Densetsu - Kamigami no Triforce (Japan).sfc"
+# The folder where you store your MSU Packs, allows for relative path (eg: ../../ALTTPR/MSU)
+msupath: ""
+# 1 : the script will automatically run the seed when saved / 0 : will only save the seed.
+auto_start: 1
 heart_speed:
     off: 0
     double: 0
@@ -311,6 +316,6 @@ heart_color:
 background_music:
     on: 1
     off: 0
-quickswap: # Only available when it's not a race ROM
+quickswap: # Available if the preset allows quickswap
     on: 1
     off: 0
