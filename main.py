@@ -54,7 +54,7 @@ async def random_sprite(rom_path,hash,heart_speed,heart_color,sprite,background_
         #     j += 1
         if auto_start:
             os.chdir(outpath)
-            os.system(fname + '.sfc')
+            os.system('\"' + fname + '.sfc\"')
 
     else:
         await pyz3r.rom.write(patched_rom, 'seed.sfc')
