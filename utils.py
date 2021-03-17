@@ -10,7 +10,7 @@ import webbrowser
 
 import pyz3r
 
-import numpy.random as rd
+import random as rd
 
 msupacks = []
 
@@ -25,7 +25,7 @@ class thread(threading.Thread):
 
     def run(self):
         if self.url is None:
-            os.system('\"' + self.path + '\"')
+            os.system('cmd /c \"' + self.path + '\"')
         else:
             os.system('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,200 --window-size={:},{:}'.format(self.url, self.w, self.h))
 
@@ -144,7 +144,7 @@ def download(seed, rom, msu, timerpath, patch, emu, timer, track, doortrack, spe
         try:
             pack = msupack.get()
             if pack == 'Random':
-                pack = msupacks[rd.randint(len(msupacks))]
+                pack = msupacks[rd.randint(0, len(msupacks)-1)]
 
             if pack == 'Default':
                 fdir = rom.get()[::-1]
@@ -202,7 +202,7 @@ def pick_setting(weights, default=''):
             l.append(x)
     if len(l) == 0:
         return default
-    return l[rd.randint(len(l))]
+    return l[rd.randint(0, len(l)-1)]
 
 
 def tracker_url(spoilers, door, meta=None):

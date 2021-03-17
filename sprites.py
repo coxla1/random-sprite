@@ -4,7 +4,6 @@ import ast
 from PIL import Image, ImageTk
 import urllib.request
 import io
-import numpy as np
 import json
 
 sprites = {}
@@ -60,16 +59,15 @@ def window(master):
         download()
         f = Image.open('data/sprites.png')
 
-    img = np.array(f)
     x, y = 16, 24
     scale = 1
-
+    print(f.size)
     m = 0
     q = 15
     r = 0
     lbl_sprite = {}
     for s in sprites:
-        sprt = Image.fromarray(img[:,sprites[s]['xmin']:sprites[s]['xmax'],:])
+        sprt = f.crop((sprites[s]['xmin'],0,sprites[s]['xmax']-1,y-1))
         sprt = sprt.resize((int(scale*x),int(scale*y)), resample=Image.NEAREST)
         sprt = ImageTk.PhotoImage(sprt)
 
