@@ -1,4 +1,9 @@
-config.yaml
-extractspritenames.py
+testing/*
+__pycache__/*
+build/*
+chromedriver.exe
 Zelda no Densetsu - Kamigami no Triforce (Japan).sfc
 seed.sfc
+data/sprites.png
+data/list.json
+data/config.json

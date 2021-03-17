@@ -1,16 +1,22 @@
-# random-sprite
-Using [PyZ3R library](https://github.com/tcprescott/pyz3r), select a random sprite from a restricted list, apply a MSU pack (if available) and then launch the seed.
+# What is this?
+I'm lazy, so I wrote a soft to open everything I need when I play a seed (timer, tracker, emulator if I don't have access to my console).
+It can also pick a given MSU Pack or a random one, and features a weighted random sprite list (so you can play with random sprites with visible shadow for instance).
+Starting tracker will only work on Windows and requires Google Chrome (may change in the future).
 
-# Install instructions
-* Clone or download this repository.
-* Install [Python 3.6+](https://www.python.org/), _don't forget to add to PATH variable when installing_.
+Many thanks to Synack for providing the [PyZ3R library](https://github.com/tcprescott/pyz3r) !
+
+# Ok cool, how do I use this?
+You can find the latest version on the [Releases]() page.
+Just download the executable and start using it!
+Currently this is Windows only, but I'm looking into compiling it for macOS and Linux as well.
+If you are on one of these systems, you can run it from the source code, but some features may not be available (eg, starting tracker or emulator).
+
+# Running it from source
+* Download sources from the [Releases]() page.
+* Install Python (3.8+ recommended, not sure which version is compatible otherwise).
 * In a command line, install the requirements using : `python -m pip install -r requirements.txt`
-* Rename `default.yaml` to `config.yaml`
-* Copy the JAP 1.0 ROM of ALTTP in the current directory (google for it) with the following name (this can also be edited in `config.yaml`) : `Zelda no Densetsu - Kamigami no Triforce (Japan).sfc`
-* If you want to automatically start the seed when generated : associate `.sfc` file extension with your emulator.
+* Start it with the command `python gui.py`
 
-# Usage
-* Configure your settings by editing `config.yaml` file (options are the ones available on the website)
-* Either execute `run.bat` (Windows only) or do the following from command line : `python main.py`
-* Paste seed URL, wait for it to create a patched file in `output/`
-* Note : if you automatically start the seed, the command line will not close, you can do it when emulator has started.
+# Bug reports
+Feel free to contact me on Discord (Coxla#2119) if you find any bug.
+However I'm not into adding features as of now.
