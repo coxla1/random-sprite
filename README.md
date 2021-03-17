@@ -5,8 +5,7 @@ It can also pick a given MSU Pack or a random one, and features a weighted rando
 
 Starting tracker will only work on Windows and requires Google Chrome (may change in the future).
 
-
-Many thanks to Synack for providing the [PyZ3R library](https://github.com/tcprescott/pyz3r) !
+Many thanks to Synack for providing the [pyz3r library](https://github.com/tcprescott/pyz3r)!
 
 # Ok cool, how do I use this?
 You can find the latest version on the [Releases](https://github.com/coxla1/random-sprite/releases) page.
