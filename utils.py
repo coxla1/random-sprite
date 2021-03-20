@@ -1,6 +1,7 @@
 from tkinter import filedialog as fd
 
 import os
+import subprocess
 import shutil
 import threading
 
@@ -25,9 +26,9 @@ class thread(threading.Thread):
 
     def run(self):
         if self.url is None:
-            os.system('cmd /c \"' + self.path + '\"')
+            subprocess.call('\"' + self.path + '\"')
         else:
-            os.system('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,200 --window-size={:},{:}'.format(self.url, self.w, self.h))
+            subprocess.call('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,200 --window-size={:},{:}'.format(self.url, self.w, self.h))
 
 def set_path(txt, type):
     if type == 'file':
