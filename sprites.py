@@ -61,7 +61,7 @@ def window(master):
 
     x, y = 16, 24
     scale = 1
-    print(f.size)
+
     m = 0
     q = 15
     r = 0

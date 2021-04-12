@@ -16,28 +16,39 @@ m = 0
 frm_path = tk.Frame(window, bd=1)
 frm_path.grid(row=n, column=0, sticky=tk.W)
 
-# Seed hash
-lbl_seed = tk.Label(frm_path, text='Seed hash/URL')
+# # Seed hash
+# lbl_seed = tk.Label(frm_path, text='Seed hash/URL')
+# lbl_seed.grid(row=m, column=0, sticky=tk.W)
+#
+# var_seed = tk.StringVar()
+# txt_seed = tk.Entry(frm_path, width=64, exportselection=0, textvariable=var_seed)
+# txt_seed.grid(row=m, column=1, sticky=tk.W)
+
+# Seed path
+lbl_seed = tk.Label(frm_path, text='Seed path')
 lbl_seed.grid(row=m, column=0, sticky=tk.W)
 
 var_seed = tk.StringVar()
 txt_seed = tk.Entry(frm_path, width=64, exportselection=0, textvariable=var_seed)
 txt_seed.grid(row=m, column=1, sticky=tk.W)
 
+btn_seed = tk.Button(frm_path, text='...', width=10, command=lambda: utils.set_path(var_seed, 'file'))
+btn_seed.grid(row=m, column=2, sticky=tk.W)
+
 m += 1
 
-# ROM path
-lbl_rom = tk.Label(frm_path, text='ROM path')
-lbl_rom.grid(row=m, column=0, sticky=tk.W)
-
+# # ROM path
+# lbl_rom = tk.Label(frm_path, text='ROM path')
+# lbl_rom.grid(row=m, column=0, sticky=tk.W)
+#
 var_rom = tk.StringVar()
-txt_rom = tk.Entry(frm_path, width=64, exportselection=0, textvariable=var_rom)
-txt_rom.grid(row=m, column=1, sticky=tk.W)
-
-btn_rom = tk.Button(frm_path, text='...', width=10, command=lambda: utils.set_path(var_rom, 'file'))
-btn_rom.grid(row=m, column=2, sticky=tk.W)
-
-m += 1
+# txt_rom = tk.Entry(frm_path, width=64, exportselection=0, textvariable=var_rom)
+# txt_rom.grid(row=m, column=1, sticky=tk.W)
+#
+# btn_rom = tk.Button(frm_path, text='...', width=10, command=lambda: utils.set_path(var_rom, 'file'))
+# btn_rom.grid(row=m, column=2, sticky=tk.W)
+#
+# m += 1
 
 # MSU folder
 lbl_msu = tk.Label(frm_path, text='MSU folder')
@@ -111,7 +122,7 @@ frm_check.grid(row=n, column=0, sticky=tk.W)
 
 # Patch ROM
 var_patch = tk.IntVar()
-chk_patch = tk.Checkbutton(frm_check, text='Patch ROM',variable=var_patch, onvalue=1, offvalue=0)
+chk_patch = tk.Checkbutton(frm_check, text='Patch ROM',variable=var_patch, onvalue=1, offvalue=0, state='disabled')
 chk_patch.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
@@ -337,8 +348,15 @@ m = 0
 frm_buttons = tk.Frame(window, bd=1)
 frm_buttons.grid(row=n, column=0)
 
+# Roll settings
+btn_settings = tk.Button(frm_buttons, text='Roll settings', command=lambda: utils.roll_settings(var_speed, var_color, var_glitches, sprites.sprites, lbl_info))
+btn_settings.grid(row=0, column=m, sticky=tk.W)
+
+m += 1
+
 # Download
-btn_download = tk.Button(frm_buttons, text='Download seed')
+# btn_download = tk.Button(frm_buttons, text='Download seed')
+btn_download = tk.Button(frm_buttons, text='Use helper')
 btn_download.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
@@ -365,13 +383,15 @@ n += 1
 lbl_info = tk.Label(window, text='')
 lbl_info.grid(row=n, column=0, sticky=tk.W)
 
-btn_download.config(command=lambda: utils.download(var_seed, var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches, var_msupack, sprites.sprites, btn_output, lbl_info))
+# btn_download.config(command=lambda: utils.download(var_seed, var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches, var_msupack, sprites.sprites, btn_output, lbl_info))
+btn_download.config(command=lambda: utils.helper(var_seed, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_glitches, var_msupack, btn_output, lbl_info))
 
 # Loading
 utils.load_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
 utils.refresh_msu(var_msu.get(), lst_msupack, var_msupack)
 sprites.build_dict()
 sprites.load_sprites()
+var_patch.set(0)
 
 # Run
 window.mainloop()

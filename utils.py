@@ -132,30 +132,125 @@ async def gen_seed(rom, hash, speed, color, sprite, bgm, quickswap):
     return seed.data['spoiler']
 
 
-def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches, msupack, sprites, output, info):
+# def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches, msupack, sprites, output, info):
+#     global msupacks
+#
+#     if patch.get():
+#         # Patch the ROM
+#         speed_val = {}
+#         for x in speed:
+#             speed_val[x] = speed[x].get()
+#
+#         color_val = {}
+#         for x in color:
+#             color_val[x] = color[x].get()
+#
+#         if glitches.get():
+#             sprite = 'Link'
+#         else:
+#             sprites_val = {s: sprites[s]['var'].get() for s in sprites}
+#             sprite = pick_setting(sprites_val, 'Link')
+#
+#         try:
+#             settings = asyncio.run(gen_seed(rom.get(), hash(seed.get()), pick_setting(speed_val, 'normal'), pick_setting(color_val, 'red'), sprite, bgm.get(), quickswap.get()))
+#         except:
+#             info.config(text='An error occured while patching the ROM.')
+#             return -1
+#
+#         # Choose MSU Pack
+#         try:
+#             pack = msupack.get()
+#             if pack == 'Random':
+#                 pack = msupacks[rd.randint(0, len(msupacks)-1)]
+#
+#             if pack == 'Default':
+#                 fdir = rom.get()[::-1]
+#                 i = fdir.index('/')
+#                 fdir = fdir[i:][::-1]
+#                 fname = 'seed.sfc'
+#             else:
+#                 fdir = msu.get() + '/' + pack
+#                 for f in os.listdir(fdir)[::-1]:
+#                     if f[-4:] == '.msu':
+#                         fname = (f[-5::-1])[::-1] + '.sfc'
+#                         break
+#
+#             f = fdir + '/' + fname
+#             shutil.move(os.getcwd() + '/seed.sfc', f)
+#
+#         except:
+#             info.config(text='An error occured while writing to the MSU directory.')
+#             return -1
+#
+#         # Start emulator
+#         if emu.get():
+#             t_emu = thread('"{:}" "{:}"'.format(emupath.get(), f))
+#             t_emu.start()
+#
+#         info.config(text='MSU Pack: ' + pack + ' // ' + 'Sprite: ' + sprite)
+#         output.config(state='normal', command=lambda: webbrowser.open('file://' + fdir))
+#
+#     # Start timer
+#     if timer.get():
+#         print('time')
+#         t_timer = thread(timerpath.get())
+#         t_timer.start()
+#
+#     # Start QUSB2SNES
+#     if usb.get():
+#         print('usb')
+#         t_usb = thread(usbpath.get())
+#         t_usb.start()
+#
+#     # Start tracker
+#     if track.get():
+#         if trackpath.get():
+#             t_tracker = thread(trackpath.get())
+#             t_tracker.start()
+#         else:
+#             if patch.get():
+#                 url, w, h = tracker_url(settings['meta']['spoilers'], door.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
+#             else:
+#                 url, w, h = tracker_url('mystery', door.get(), sphere.get(), map.get(), logic.get())
+#             t_tracker = thread('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(url, w+15, h+15))
+#             t_tracker.start()
+
+
+def roll_settings(speed, color, glitches, sprites, info):
+    speed_val = {}
+    for x in speed:
+        speed_val[x] = speed[x].get()
+
+    color_val = {}
+    for x in color:
+        color_val[x] = color[x].get()
+
+    if glitches.get():
+        sprt = 'Link'
+    else:
+        sprites_val = {s: sprites[s]['var'].get() for s in sprites}
+        sprt = pick_setting(sprites_val, 'Link')
+
+    spd = pick_setting(speed_val, 'normal')
+    col = pick_setting(color_val, 'red')
+
+    info.config(text='Sprite: ' + sprt + ' // ' + 'Heart speed: ' + spd + ' // ' + 'Heart color: ' + col)
+
+
+async def seed_settings(hash):
+    seed = await pyz3r.alttpr(hash_id=hash)
+    return seed.data['spoiler']
+
+
+def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, track, door, sphere, map, logic, glitches, msupack, output, info):
     global msupacks
 
-    if patch.get():
-        # Patch the ROM
-        speed_val = {}
-        for x in speed:
-            speed_val[x] = speed[x].get()
-
-        color_val = {}
-        for x in color:
-            color_val[x] = color[x].get()
-
-        if glitches.get():
-            sprite = 'Link'
-        else:
-            sprites_val = {s: sprites[s]['var'].get() for s in sprites}
-            sprite = pick_setting(sprites_val, 'Link')
-
+    if seed.get():
+        hash = seed.get()[-14:-4]
         try:
-            settings = asyncio.run(gen_seed(rom.get(), hash(seed.get()), pick_setting(speed_val, 'normal'), pick_setting(color_val, 'red'), sprite, bgm.get(), quickswap.get()))
+            settings = asyncio.run(seed_settings(hash))
         except:
-            info.config(text='An error occured while patching the ROM.')
-            return -1
+            settings = []
 
         # Choose MSU Pack
         try:
@@ -164,9 +259,7 @@ def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu,
                 pack = msupacks[rd.randint(0, len(msupacks)-1)]
 
             if pack == 'Default':
-                fdir = rom.get()[::-1]
-                i = fdir.index('/')
-                fdir = fdir[i:][::-1]
+                fdir = msu.get()
                 fname = 'seed.sfc'
             else:
                 fdir = msu.get() + '/' + pack
@@ -176,7 +269,7 @@ def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu,
                         break
 
             f = fdir + '/' + fname
-            shutil.move(os.getcwd() + '/seed.sfc', f)
+            shutil.move(seed.get(), f)
 
         except:
             info.config(text='An error occured while writing to the MSU directory.')
@@ -187,7 +280,7 @@ def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu,
             t_emu = thread('"{:}" "{:}"'.format(emupath.get(), f))
             t_emu.start()
 
-        info.config(text='MSU Pack: ' + pack + ' // ' + 'Sprite: ' + sprite)
+        info.config(text='MSU Pack: ' + pack)
         output.config(state='normal', command=lambda: webbrowser.open('file://' + fdir))
 
     # Start timer
@@ -208,7 +301,7 @@ def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu,
             t_tracker = thread(trackpath.get())
             t_tracker.start()
         else:
-            if patch.get():
+            if seed.get() and settings:
                 url, w, h = tracker_url(settings['meta']['spoilers'], door.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
             else:
                 url, w, h = tracker_url('mystery', door.get(), sphere.get(), map.get(), logic.get())
@@ -309,7 +402,7 @@ def help(master):
     window.resizable(width=False,height=False)
     window.iconbitmap('data/icon.ico')
 
-    txt_help = 'Paths marked with a * or ** are optional\n\nIf tracker path is left empty, start tracker will then launch Dunka\'s one (requires Chrome).\n\nTracker options are specific to Dunka\'s one.\n\nIf all weights are set to zero, setting will be picked at random.\n\nAll configurations are saved when closing the program.'
+    txt_help = 'If you choose to use the default MSU Pack, your seed will be written to the MSU folder.\n\nPaths marked with a * or ** are optional\n\nIf tracker path is left empty, start tracker will then launch Dunka\'s one (requires Chrome).\n\nTracker options are specific to Dunka\'s one.\n\nIf all weights are set to zero, setting will be picked at random.\n\nAll configurations are saved when closing the program.'
 
     frm_help = tk.Frame(window, border=1)
     frm_help.grid(row=0, column=0, sticky=tk.W)
