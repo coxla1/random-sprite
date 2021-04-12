@@ -1,4 +1,4 @@
-tkinter
+tk
 os
 shutil
 threading
@@ -6,7 +6,6 @@ json
 asyncio
 webbrowser
 pyz3r
-numpy
 ast
 PIL
 urllib

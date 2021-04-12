@@ -19,7 +19,7 @@ If you are on one of these systems, you can run it from the source code, but som
 # Running it from source
 * Download sources from the [Releases](https://github.com/coxla1/random-sprite/releases) page.
 * Install Python (3.8+ recommended, not sure which version is compatible otherwise).
-* In a command line, install the requirements using : `python -m pip install -r requirements.txt`
+* (Currently broken, you have to test one by one every requirement)In a command line, install the requirements using : `python -m pip install -r requirements.txt`
 * Start it with the command `python gui.py`
 
 # Bug reports

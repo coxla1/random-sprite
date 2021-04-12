@@ -9,26 +9,43 @@ import json
 import asyncio
 import webbrowser
 
+import tkinter as tk
 import pyz3r
 
 import random as rd
 
 msupacks = []
 
+default_cfg = {'rom': '', 'msu': '', 'emupath': '', 'timerpath': '', 'usbpath': '', 'trackpath': '', 'patch': 0, 'emu': 0, 'timer': 0, 'usb': 0, 'track': 0, 'door': 0, 'sphere' : 0, 'map': 'None', 'logic': 'No Glitches', 'speed': {'off': 0, 'double': 0, 'normal': 0, 'half': 0, 'quarter': 0}, 'color': {'red': 0, 'blue': 0, 'green': 0, 'yellow': 0}, 'bgm': 0, 'quickswap': 0, 'glitches': 0}
+general_set = ['rom', 'msu', 'emupath', 'timerpath', 'usbpath', 'trackpath', 'patch', 'emu', 'timer', 'usb', 'track', 'door', 'sphere', 'map', 'logic', 'bgm', 'quickswap', 'glitches']
+
+speed_set = ['off', 'double', 'normal', 'half', 'quarter']
+color_set = ['red', 'blue', 'green', 'yellow']
+
+# class thread(threading.Thread):
+#     def __init__(self, path=None, url=None, w=0, h=0):
+#         super().__init__()
+#         self.path = path
+#         self.url = url
+#         self.w = w+15
+#         self.h = h+15
+#         self.daemon = True
+#
+#     def run(self):
+#         if self.url is None:
+#             subprocess.call('\"' + self.path + '\"', shell=True)
+#         else:
+#             subprocess.call('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(self.url, self.w, self.h))
+
+
 class thread(threading.Thread):
-    def __init__(self, path=None, url=None):
+    def __init__(self, cmd):
         super().__init__()
-        self.path = path
-        self.url = url
-        self.w = 448+15
-        self.h = 988+15
+        self.cmd = cmd
         self.daemon = True
 
     def run(self):
-        if self.url is None:
-            subprocess.call('\"' + self.path + '\"')
-        else:
-            subprocess.call('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,200 --window-size={:},{:}'.format(self.url, self.w, self.h))
+        subprocess.call(self.cmd)
 
 def set_path(txt, type):
     if type == 'file':
@@ -36,10 +53,6 @@ def set_path(txt, type):
     else:
         path = fd.askdirectory()
     txt.set(path)
-
-
-def toggle_door(door, tracker):
-    door.config(state='normal' if tracker.get() else 'disabled')
 
 
 def refresh_msu(path, lst_msupack, var_msupack):
@@ -64,35 +77,38 @@ def refresh_msu(path, lst_msupack, var_msupack):
     var_msupack.set('Default')
 
 
-def load_cfg(rom, msu, timerpath, patch, emu, timer, track, doortrack, speed, color, bgm, quickswap, glitches):
+def load_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches):
+    global default_cfg, general_set, speed_set, color_set
+
     try:
         with open('data/config.json','r') as cfgfile:
             cfg = json.load(cfgfile)
     except:
-        cfg = {'rom': '', 'msu': '', 'timerpath': '', 'patch': 0, 'emu': 0, 'timer': 0, 'track': 0, 'doortrack': 0, 'speed': {'off': 0, 'double': 0, 'normal': 0, 'half': 0, 'quarter': 0}, 'color': {'red': 0, 'blue': 0, 'green': 0, 'yellow': 0}, 'bgm': 0, 'quickswap': 0, 'glitches': 0}
-
-    general_set = ['rom', 'msu', 'timerpath', 'patch', 'emu', 'timer', 'track', 'doortrack', 'bgm', 'quickswap', 'glitches']
-
-    speed_set = ['off', 'double', 'normal', 'half', 'quarter']
-    color_set = ['red', 'blue', 'green', 'yellow']
+        cfg = default_cfg
 
     for var in general_set:
-        eval(var).set(cfg[var])
+        try:
+            eval(var).set(cfg[var])
+        except:
+            eval(var).set(default_cfg[var])
 
     for var in speed_set:
-        speed[var].set(cfg['speed'][var])
+        try:
+            speed[var].set(cfg['speed'][var])
+        except:
+            speed[var].set(default_cfg['speed'][var])
 
     for var in color_set:
-        color[var].set(cfg['color'][var])
+        try:
+            color[var].set(cfg['color'][var])
+        except:
+            color[var].set(default_cfg['color'][var])
 
 
-def save_cfg(rom, msu, timerpath, patch, emu, timer, track, doortrack, speed, color, bgm, quickswap, glitches):
-    cfg = {'rom': '', 'msu': '', 'timerpath': '', 'patch': 0, 'emu': 0, 'timer': 0, 'track': 0, 'doortrack': 0, 'speed': {'off': 0, 'double': 0, 'normal': 0, 'half': 0, 'quarter': 0}, 'color': {'red': 0, 'blue': 0, 'green': 0, 'yellow': 0}, 'bgm': 0, 'quickswap': 0, 'glitches': 0}
+def save_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches):
+    global default_cfg, general_set, speed_set, color_set
 
-    general_set = ['rom', 'msu', 'timerpath', 'patch', 'emu', 'timer', 'track', 'doortrack', 'bgm', 'quickswap', 'glitches']
-
-    speed_set = ['off', 'double', 'normal', 'half', 'quarter']
-    color_set = ['red', 'blue', 'green', 'yellow']
+    cfg = default_cfg
 
     for var in general_set:
         cfg[var] = eval(var).get()
@@ -116,7 +132,7 @@ async def gen_seed(rom, hash, speed, color, sprite, bgm, quickswap):
     return seed.data['spoiler']
 
 
-def download(seed, rom, msu, timerpath, patch, emu, timer, track, doortrack, speed, color, bgm, quickswap, glitches, msupack, sprites, output, info):
+def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches, msupack, sprites, output, info):
     global msupacks
 
     if patch.get():
@@ -150,7 +166,7 @@ def download(seed, rom, msu, timerpath, patch, emu, timer, track, doortrack, spe
             if pack == 'Default':
                 fdir = rom.get()[::-1]
                 i = fdir.index('/')
-                fdir = fdir[i+1:][::-1]
+                fdir = fdir[i:][::-1]
                 fname = 'seed.sfc'
             else:
                 fdir = msu.get() + '/' + pack
@@ -168,23 +184,36 @@ def download(seed, rom, msu, timerpath, patch, emu, timer, track, doortrack, spe
 
         # Start emulator
         if emu.get():
-            t_emu = thread(path=f)
+            t_emu = thread('"{:}" "{:}"'.format(emupath.get(), f))
             t_emu.start()
 
         info.config(text='MSU Pack: ' + pack + ' // ' + 'Sprite: ' + sprite)
         output.config(state='normal', command=lambda: webbrowser.open('file://' + fdir))
 
+    # Start timer
     if timer.get():
-        t_timer = thread(path=timerpath.get())
+        print('time')
+        t_timer = thread(timerpath.get())
         t_timer.start()
 
+    # Start QUSB2SNES
+    if usb.get():
+        print('usb')
+        t_usb = thread(usbpath.get())
+        t_usb.start()
+
+    # Start tracker
     if track.get():
-        if patch.get():
-            url = tracker_url(settings['meta']['spoilers'], 'C' if doortrack.get() else 'N', settings['meta'])
+        if trackpath.get():
+            t_tracker = thread(trackpath.get())
+            t_tracker.start()
         else:
-            url = tracker_url('mystery', 'C' if doortrack.get() else 'N')
-        t_tracker = thread(url=url)
-        t_tracker.start()
+            if patch.get():
+                url, w, h = tracker_url(settings['meta']['spoilers'], door.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
+            else:
+                url, w, h = tracker_url('mystery', door.get(), sphere.get(), map.get(), logic.get())
+            t_tracker = thread('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(url, w+15, h+15))
+            t_tracker.start()
 
 
 def hash(url):
@@ -206,14 +235,26 @@ def pick_setting(weights, default=''):
     return l[rd.randint(0, len(l)-1)]
 
 
-def tracker_url(spoilers, door, meta=None):
+def tracker_url(spoilers, door, sphere, map, logic, meta=None):
+    door_url = 'C' if door else 'N'
+    sphere_url = 'Y' if sphere else 'N'
+    map_url = 'M' if map == 'Normal' else 'C' if map == 'Compact' else 'N'
+    logic_url = 'O' if logic == 'OWG' else 'M' if logic == 'MG / No Logic' else 'N'
+
+    width = 1340 if map_url == 'M' else 448 # ok
+    if sphere_url == 'Y':
+        height = 988 if map_url == 'C' else 764
+    else:
+        height = 692 if map_url == 'C' else 468
+
     if spoilers == 'mystery':
-        url = 'https://alttptracker.dunka.net/tracker.html?f=ONSNMAGR7R7RCNYS{:}1111NY8080&sprite=link&map=C&starting=N'.format(door)
+        url = 'https://alttptracker.dunka.net/tracker.html?f=ONSN{:}AGR7R7R{:}N{:}S{:}1111NY8080&sprite=link&map=C&starting=N'.format(logic_url, map_url, sphere_url, door_url)
 
     else:
         mode = meta['mode'][0].upper()
         entrance = 'S' if 'shuffle' in meta else 'N'
         boss = 'N' if meta['enemizer.boss_shuffle'] == 'none' else 'S'
+        enemy = 'N' if meta['enemizer.enemy_shuffle'] == 'none' else 'S'
 
         goal = meta['goal'][0].upper()
         if goal not in ['G','F','P']:
@@ -257,7 +298,21 @@ def tracker_url(spoilers, door, meta=None):
             shuffledsmallkeys = '1'
             shuffledbigkeys = '1'
 
-        url = 'https://alttptracker.dunka.net/{:}tracker.html?f={:}{:}{:}NMA{:}{:}{:}{:}{:}{:}CNYN{:}{:}{:}{:}{:}NY8080&sprite=link&map=C&starting=N'.format('entrance' if entrance == 'S' else '', mode, entrance, boss, goal, tower, tower_crystals, ganon, ganon_crystals, swords, door, shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys)
+        url = 'https://alttptracker.dunka.net/{:}tracker.html?f={:}{:}{:}{:}{:}A{:}{:}{:}{:}{:}{:}{:}N{:}N{:}{:}{:}{:}{:}NY8080&sprite=link&map=C&starting=N'.format('entrance' if entrance == 'S' else '', mode, entrance, boss, enemy, logic_url, goal, tower, tower_crystals, ganon, ganon_crystals, swords, map_url, sphere_url, door_url, shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys)
 
-    return url
+    return (url, width, height)
 
+def help(master):
+
+    window = tk.Toplevel(master)
+    window.title('Help')
+    window.resizable(width=False,height=False)
+    window.iconbitmap('data/icon.ico')
+
+    txt_help = 'Paths marked with a * or ** are optional\n\nIf tracker path is left empty, start tracker will then launch Dunka\'s one (requires Chrome).\n\nTracker options are specific to Dunka\'s one.\n\nIf all weights are set to zero, setting will be picked at random.\n\nAll configurations are saved when closing the program.'
+
+    frm_help = tk.Frame(window, border=1)
+    frm_help.grid(row=0, column=0, sticky=tk.W)
+
+    lbl_help = tk.Label(frm_help, text=txt_help)
+    lbl_help.grid(row=0, column=0, sticky=tk.W)

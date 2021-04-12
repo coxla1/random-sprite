@@ -52,8 +52,21 @@ btn_msu.grid(row=m, column=2, sticky=tk.W)
 
 m += 1
 
+# Emulator path
+lbl_emu = tk.Label(frm_path, text='Emulator path*')
+lbl_emu.grid(row=m, column=0, sticky=tk.W)
+
+var_emupath = tk.StringVar()
+txt_emu = tk.Entry(frm_path, width=64, exportselection=0, textvariable=var_emupath)
+txt_emu.grid(row=m, column=1, sticky=tk.W)
+
+btn_emu = tk.Button(frm_path, text='...', width=10, command=lambda: utils.set_path(var_emupath, 'file'))
+btn_emu.grid(row=m, column=2, sticky=tk.W)
+
+m += 1
+
 # Timer path
-lbl_timer = tk.Label(frm_path, text='Timer path (optional)')
+lbl_timer = tk.Label(frm_path, text='Timer path*')
 lbl_timer.grid(row=m, column=0, sticky=tk.W)
 
 var_timerpath = tk.StringVar()
@@ -62,6 +75,32 @@ txt_timer.grid(row=m, column=1, sticky=tk.W)
 
 btn_timer = tk.Button(frm_path, text='...', width=10, command=lambda: utils.set_path(var_timerpath, 'file'))
 btn_timer.grid(row=m, column=2, sticky=tk.W)
+
+m += 1
+
+# QUSB2SNES path
+lbl_usb = tk.Label(frm_path, text='QUSB2SNES path*')
+lbl_usb.grid(row=m, column=0, sticky=tk.W)
+
+var_usbpath = tk.StringVar()
+txt_usb = tk.Entry(frm_path, width=64, exportselection=0, textvariable=var_usbpath)
+txt_usb.grid(row=m, column=1, sticky=tk.W)
+
+btn_usb = tk.Button(frm_path, text='...', width=10, command=lambda: utils.set_path(var_usbpath, 'file'))
+btn_usb.grid(row=m, column=2, sticky=tk.W)
+
+m += 1
+
+# Tracker path
+lbl_tracker = tk.Label(frm_path, text='Tracker path**')
+lbl_tracker.grid(row=m, column=0, sticky=tk.W)
+
+var_trackpath = tk.StringVar()
+txt_track = tk.Entry(frm_path, width=64, exportselection=0, textvariable=var_trackpath)
+txt_track.grid(row=m, column=1, sticky=tk.W)
+
+btn_track = tk.Button(frm_path, text='...', width=10, command=lambda: utils.set_path(var_trackpath, 'file'))
+btn_track.grid(row=m, column=2, sticky=tk.W)
 
 n += 1
 
@@ -91,17 +130,59 @@ chk_timer.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
 
-# Tracker
-var_track = tk.IntVar()
-chk_track = tk.Checkbutton(frm_check, text='Start tracker (Dunka)',variable=var_track, onvalue=1, offvalue=0, command=lambda: utils.toggle_door(chk_doortrack, var_track))
-chk_track.grid(row=0, column=m, sticky=tk.W)
+# QUSB2SNES
+var_usb = tk.IntVar()
+chk_usb = tk.Checkbutton(frm_check, text='Start QUSB2SNES',variable=var_usb, onvalue=1, offvalue=0)
+chk_usb.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
 
+# Tracker
+var_track = tk.IntVar()
+chk_track = tk.Checkbutton(frm_check, text='Start tracker',variable=var_track, onvalue=1, offvalue=0)
+chk_track.grid(row=0, column=m, sticky=tk.W)
+
+n += 1
+
+## Dunka's tracker
+m = 0
+frm_track = tk.Frame(window, bd=1)
+frm_track.grid(row=n, column=0, sticky=tk.W)
+
 # Door tracker
-var_doortrack = tk.IntVar()
-chk_doortrack = tk.Checkbutton(frm_check, text='Door tracker',variable=var_doortrack, onvalue=1, offvalue=0, state='normal' if var_track.get() else 'disabled')
-chk_doortrack.grid(row=0, column=m, sticky=tk.W)
+var_door = tk.IntVar()
+chk_door = tk.Checkbutton(frm_track, text='Door tracker',variable=var_door, onvalue=1, offvalue=0)
+chk_door.grid(row=0, column=m, sticky=tk.W)
+
+m += 1
+
+# Sphere tracker
+var_sphere = tk.IntVar()
+chk_sphere = tk.Checkbutton(frm_track, text='Sphere tracker',variable=var_sphere, onvalue=1, offvalue=0)
+chk_sphere.grid(row=0, column=m, sticky=tk.W)
+
+m += 1
+
+# Map tracker
+lbl_map = tk.Label(frm_track, text='Map tracker/logic')
+lbl_map.grid(row=0, column=m, sticky=tk.W)
+
+m += 1
+
+var_map = tk.StringVar()
+var_map.set('None')
+lst_map = tk.OptionMenu(frm_track, var_map, *['None', 'Normal', 'Compact'])
+lst_map.config(width=12)
+lst_map.grid(row=0, column=m, sticky=tk.W)
+
+m += 1
+
+# Map logic
+var_logic = tk.StringVar()
+var_logic.set('None')
+lst_logic = tk.OptionMenu(frm_track, var_logic, *['No Glitches', 'OWG', 'MG / No Logic'])
+lst_logic.config(width=12)
+lst_logic.grid(row=0, column=m, sticky=tk.W)
 
 n += 1
 
@@ -272,19 +353,23 @@ m += 1
 btn_edit = tk.Button(frm_buttons, text='Edit sprites list', command=lambda: sprites.window(window))
 btn_edit.grid(row=0, column=m, sticky=tk.W)
 
+m += 1
+
+# Help
+btn_help = tk.Button(frm_buttons, text='Help', command=lambda: utils.help(window))
+btn_help.grid(row=0, column=m, sticky=tk.W)
+
 n += 1
 
 ## MSU and sprite informations
 lbl_info = tk.Label(window, text='')
 lbl_info.grid(row=n, column=0, sticky=tk.W)
 
-btn_download.config(command=lambda: utils.download(var_seed, var_rom, var_msu, var_timerpath, var_patch, var_emu, var_timer, var_track, var_doortrack, var_speed, var_color, var_bgm, var_quickswap, var_glitches, var_msupack, sprites.sprites, btn_output, lbl_info))
+btn_download.config(command=lambda: utils.download(var_seed, var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches, var_msupack, sprites.sprites, btn_output, lbl_info))
 
 # Loading
-
-utils.load_cfg(var_rom, var_msu, var_timerpath, var_patch, var_emu, var_timer, var_track, var_doortrack, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
+utils.load_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
 utils.refresh_msu(var_msu.get(), lst_msupack, var_msupack)
-utils.toggle_door(chk_doortrack, var_track)
 sprites.build_dict()
 sprites.load_sprites()
 
@@ -292,6 +377,5 @@ sprites.load_sprites()
 window.mainloop()
 
 # Quitting
-
-utils.save_cfg(var_rom, var_msu, var_timerpath, var_patch, var_emu, var_timer, var_track, var_doortrack, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
+utils.save_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
 sprites.save_sprites()
