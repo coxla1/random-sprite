@@ -6,7 +6,7 @@ build_exe_options = {
     'includes': ['sprites', 'utils'],
     'excludes': ['mkl', 'babel', 'matplotlib', 'Cython', 'numpy', 'pandas', 'PySide2', 'PyQt5'],
     'zip_include_packages': ['*'],
-    'zip_exclude_packages': ['pyz3r', 'random' ,'os', 'shutil', 'tkinter', 'threading', 'json', 'asyncio', 'webbrowser', 'PIL', 'urllib.request', 'io'],
+    'zip_exclude_packages': ['subprocess', 'pyz3r', 'random' ,'os', 'shutil', 'tkinter', 'threading', 'json', 'asyncio', 'webbrowser', 'PIL', 'urllib.request', 'io'],
     'include_files': [('data/icon.ico', 'data/icon.ico'), ('data/sprites.txt', 'data/sprites.txt'), ('data/version.txt', 'data/version.txt')],
     'optimize': 2,
     }

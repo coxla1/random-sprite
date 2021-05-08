@@ -17,26 +17,10 @@ import random as rd
 msupacks = []
 
 default_cfg = {'rom': '', 'msu': '', 'emupath': '', 'timerpath': '', 'usbpath': '', 'trackpath': '', 'patch': 0, 'emu': 0, 'timer': 0, 'usb': 0, 'track': 0, 'door': 0, 'sphere' : 0, 'map': 'None', 'logic': 'No Glitches', 'speed': {'off': 0, 'double': 0, 'normal': 0, 'half': 0, 'quarter': 0}, 'color': {'red': 0, 'blue': 0, 'green': 0, 'yellow': 0}, 'bgm': 0, 'quickswap': 0, 'glitches': 0}
-general_set = ['rom', 'msu', 'emupath', 'timerpath', 'usbpath', 'trackpath', 'patch', 'emu', 'timer', 'usb', 'track', 'door', 'sphere', 'map', 'logic', 'bgm', 'quickswap', 'glitches']
 
+general_set = ['rom', 'msu', 'emupath', 'timerpath', 'usbpath', 'trackpath', 'patch', 'emu', 'timer', 'usb', 'track', 'door', 'sphere', 'map', 'logic', 'bgm', 'quickswap', 'glitches']
 speed_set = ['off', 'double', 'normal', 'half', 'quarter']
 color_set = ['red', 'blue', 'green', 'yellow']
-
-# class thread(threading.Thread):
-#     def __init__(self, path=None, url=None, w=0, h=0):
-#         super().__init__()
-#         self.path = path
-#         self.url = url
-#         self.w = w+15
-#         self.h = h+15
-#         self.daemon = True
-#
-#     def run(self):
-#         if self.url is None:
-#             subprocess.call('\"' + self.path + '\"', shell=True)
-#         else:
-#             subprocess.call('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(self.url, self.w, self.h))
-
 
 class thread(threading.Thread):
     def __init__(self, cmd):
@@ -216,27 +200,6 @@ async def gen_seed(rom, hash, speed, color, sprite, bgm, quickswap):
 #             t_tracker.start()
 
 
-def roll_settings(speed, color, glitches, sprites, info):
-    speed_val = {}
-    for x in speed:
-        speed_val[x] = speed[x].get()
-
-    color_val = {}
-    for x in color:
-        color_val[x] = color[x].get()
-
-    if glitches.get():
-        sprt = 'Link'
-    else:
-        sprites_val = {s: sprites[s]['var'].get() for s in sprites}
-        sprt = pick_setting(sprites_val, 'Link')
-
-    spd = pick_setting(speed_val, 'normal')
-    col = pick_setting(color_val, 'red')
-
-    info.config(text='Sprite: ' + sprt + ' // ' + 'Heart speed: ' + spd + ' // ' + 'Heart color: ' + col)
-
-
 async def seed_settings(hash):
     seed = await pyz3r.alttpr(hash_id=hash)
     return seed.data['spoiler']
@@ -302,9 +265,9 @@ def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, t
             t_tracker.start()
         else:
             if seed.get() and settings:
-                url, w, h = tracker_url(settings['meta']['spoilers'], door.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
+                url, w, h = tracker_url(door.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
             else:
-                url, w, h = tracker_url('mystery', door.get(), sphere.get(), map.get(), logic.get())
+                url, w, h = tracker_url(door.get(), sphere.get(), map.get(), logic.get())
             t_tracker = thread('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(url, w+15, h+15))
             t_tracker.start()
 
@@ -328,26 +291,47 @@ def pick_setting(weights, default=''):
     return l[rd.randint(0, len(l)-1)]
 
 
-def tracker_url(spoilers, door, sphere, map, logic, meta=None):
+def tracker_url(door, sphere, map, logic, meta={'spoilers': 'mystery'}):
     door_url = 'C' if door else 'N'
     sphere_url = 'Y' if sphere else 'N'
     map_url = 'M' if map == 'Normal' else 'C' if map == 'Compact' else 'N'
     logic_url = 'O' if logic == 'OWG' else 'M' if logic == 'MG / No Logic' else 'N'
 
-    width = 1340 if map_url == 'M' else 448 # ok
+    width = 1340 if map_url == 'M' else 448
     if sphere_url == 'Y':
         height = 988 if map_url == 'C' else 764
     else:
         height = 692 if map_url == 'C' else 468
 
-    if spoilers == 'mystery':
-        url = 'https://alttptracker.dunka.net/tracker.html?f=ONSN{:}AGR7R7R{:}N{:}S{:}1111NY8080&sprite=link&map=C&starting=N'.format(logic_url, map_url, sphere_url, door_url)
+
+    if meta['spoilers'] == 'mystery':
+        trackername = 'tracker'
+        type = 'O'
+        entrance = 'N'
+        boss = 'S'
+        enemy = 'S'
+        item = 'A'
+
+        goal = 'G'
+
+        tower = 'R'
+        towercrystals = '7'
+        ganon = 'R'
+        ganoncrystals = '7'
+
+        swords = 'R'
+        spoiler = 'N'
+        mystery = 'S'
+
+        dungeon = '1111'
 
     else:
-        mode = meta['mode'][0].upper()
+        trackername = 'entrancetracker' if 'shuffle' in meta else 'tracker'
+        type = meta['mode'][0].upper()
         entrance = 'S' if 'shuffle' in meta else 'N'
         boss = 'N' if meta['enemizer.boss_shuffle'] == 'none' else 'S'
         enemy = 'N' if meta['enemizer.enemy_shuffle'] == 'none' else 'S'
+        item = 'A'
 
         goal = meta['goal'][0].upper()
         if goal not in ['G','F','P']:
@@ -356,42 +340,39 @@ def tracker_url(spoilers, door, sphere, map, logic, meta=None):
             else:
                 goal = 'O'
 
-        tower_crystals = meta['entry_crystals_tower'][0].upper()
-        if tower_crystals == 'R':
+        towercrystals = meta['entry_crystals_tower'][0].upper()
+        if towercrystals == 'R':
             tower = 'R'
-            tower_crystals = '7'
+            towercrystals = '7'
         else:
             tower = 'C'
 
-        ganon_crystals = meta['entry_crystals_ganon'][0].upper()
-        if ganon_crystals == 'R':
+        ganoncrystals = meta['entry_crystals_ganon'][0].upper()
+        if ganoncrystals == 'R':
             ganon = 'R'
-            ganon_crystals = '7'
+            ganoncrystals = '7'
         else:
             ganon = 'C'
 
         swords = meta['weapons'][0].upper()
+        spoiler = 'N'
+        mystery = 'N'
 
-        dungeon = meta['dungeon_items']
-        shuffledmaps = '0'
-        shuffledcompasses = '0'
-        shuffledsmallkeys = '0'
-        shuffledbigkeys = '0'
+        if len(meta['dungeon_items']) > 4: # Standard shuffle
+            dungeon = '0000'
+        else:
+            dungeon = len(meta['dungeon_items'])*'1' + (4-len(meta['dungeon_items']))*'0'
 
-        if dungeon == 'mc':
-            shuffledmaps = '1'
-            shuffledcompasses = '1'
-        elif dungeon == 'mcs':
-            shuffledmaps = '1'
-            shuffledcompasses = '1'
-            shuffledsmallkeys = '1'
-        elif dungeon != 'standard':
-            shuffledmaps = '1'
-            shuffledcompasses = '1'
-            shuffledsmallkeys = '1'
-            shuffledbigkeys = '1'
+        if 'Potpourri' in meta['name']:
+            dungeon = '0011'
 
-        url = 'https://alttptracker.dunka.net/{:}tracker.html?f={:}{:}{:}{:}{:}A{:}{:}{:}{:}{:}{:}{:}N{:}N{:}{:}{:}{:}{:}NY8080&sprite=link&map=C&starting=N'.format('entrance' if entrance == 'S' else '', mode, entrance, boss, enemy, logic_url, goal, tower, tower_crystals, ganon, ganon_crystals, swords, map_url, sphere_url, door_url, shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys)
+    ambrosia = 'N'
+    autotracking = 'Y'
+    trackingport = '8080'
+    sprite = 'Link'
+    compact = '&map=C' if map_url == 'C' else ''
+
+    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, autotracking, trackingport, sprite, compact)
 
     return (url, width, height)
 

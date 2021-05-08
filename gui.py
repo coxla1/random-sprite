@@ -348,15 +348,9 @@ m = 0
 frm_buttons = tk.Frame(window, bd=1)
 frm_buttons.grid(row=n, column=0)
 
-# Roll settings
-btn_settings = tk.Button(frm_buttons, text='Roll settings', command=lambda: utils.roll_settings(var_speed, var_color, var_glitches, sprites.sprites, lbl_info))
-btn_settings.grid(row=0, column=m, sticky=tk.W)
-
-m += 1
-
 # Download
 # btn_download = tk.Button(frm_buttons, text='Download seed')
-btn_download = tk.Button(frm_buttons, text='Use helper')
+btn_download = tk.Button(frm_buttons, text='Run')
 btn_download.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
