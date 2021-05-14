@@ -303,7 +303,6 @@ def tracker_url(door, sphere, map, logic, meta={'spoilers': 'mystery'}):
     else:
         height = 692 if map_url == 'C' else 468
 
-
     if meta['spoilers'] == 'mystery':
         trackername = 'tracker'
         type = 'O'
@@ -363,8 +362,9 @@ def tracker_url(door, sphere, map, logic, meta={'spoilers': 'mystery'}):
         else:
             dungeon = len(meta['dungeon_items'])*'1' + (4-len(meta['dungeon_items']))*'0'
 
-        if 'Potpourri' in meta['name']:
-            dungeon = '0011'
+        if 'name' in meta:
+            if 'Potpourri' in meta['name']:
+                dungeon = '0011'
 
     ambrosia = 'N'
     autotracking = 'Y'
