@@ -162,8 +162,15 @@ frm_track.grid(row=n, column=0, sticky=tk.W)
 
 # Door tracker
 var_door = tk.IntVar()
-chk_door = tk.Checkbutton(frm_track, text='Door/Overworld',variable=var_door, onvalue=1, offvalue=0)
+chk_door = tk.Checkbutton(frm_track, text='Door',variable=var_door, onvalue=1, offvalue=0)
 chk_door.grid(row=0, column=m, sticky=tk.W)
+
+m += 1
+
+# Overworld tracker
+var_overworld = tk.IntVar()
+chk_overworld = tk.Checkbutton(frm_track, text='Overworld',variable=var_overworld, onvalue=1, offvalue=0)
+chk_overworld.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
 
@@ -378,7 +385,7 @@ lbl_info = tk.Label(window, text='')
 lbl_info.grid(row=n, column=0, sticky=tk.W)
 
 # btn_download.config(command=lambda: utils.download(var_seed, var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches, var_msupack, sprites.sprites, btn_output, lbl_info))
-btn_download.config(command=lambda: utils.helper(var_seed, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_glitches, var_msupack, btn_output, lbl_info))
+btn_download.config(command=lambda: utils.helper(var_seed, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_emu, var_timer, var_usb, var_track, var_door, var_overworld, var_sphere, var_map, var_logic, var_glitches, var_msupack, btn_output, lbl_info))
 
 # Loading
 utils.load_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)

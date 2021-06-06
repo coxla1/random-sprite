@@ -176,7 +176,6 @@ async def gen_seed(rom, hash, speed, color, sprite, bgm, quickswap):
 #
 #     # Start timer
 #     if timer.get():
-#         print('time')
 #         t_timer = thread(timerpath.get())
 #         t_timer.start()
 #
@@ -205,7 +204,7 @@ async def seed_settings(hash):
     return seed.data['spoiler']
 
 
-def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, track, door, sphere, map, logic, glitches, msupack, output, info):
+def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, track, door, overworld, sphere, map, logic, glitches, msupack, output, info):
     global msupacks
 
     if seed.get():
@@ -248,13 +247,11 @@ def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, t
 
     # Start timer
     if timer.get():
-        print('time')
         t_timer = thread(timerpath.get())
         t_timer.start()
 
     # Start QUSB2SNES
     if usb.get():
-        print('usb')
         t_usb = thread(usbpath.get())
         t_usb.start()
 
@@ -265,9 +262,9 @@ def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, t
             t_tracker.start()
         else:
             if seed.get() and settings:
-                url, w, h = tracker_url(door.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
+                url, w, h = tracker_url(door.get(), overworld.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
             else:
-                url, w, h = tracker_url(door.get(), sphere.get(), map.get(), logic.get())
+                url, w, h = tracker_url(door.get(), overworld.get(), sphere.get(), map.get(), logic.get())
             t_tracker = thread('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(url, w+15, h+15))
             t_tracker.start()
 
@@ -291,9 +288,9 @@ def pick_setting(weights, default=''):
     return l[rd.randint(0, len(l)-1)]
 
 
-def tracker_url(door, sphere, map, logic, meta={'spoilers': 'mystery'}):
+def tracker_url(door, overworld, sphere, map, logic, meta={'spoilers': 'mystery'}):
     door_url = 'C' if door else 'N'
-    overworld = 'F' if door else 'N'
+    overworld_url = 'F' if overworld else 'N'
     sphere_url = 'Y' if sphere else 'N'
     map_url = 'M' if map == 'Normal' else 'C' if map == 'Compact' else 'N'
     logic_url = 'O' if logic == 'OWG' else 'M' if logic == 'MG / No Logic' else 'N'
@@ -373,7 +370,8 @@ def tracker_url(door, sphere, map, logic, meta={'spoilers': 'mystery'}):
     sprite = 'Link'
     compact = '&map=C' if map_url == 'C' else ''
 
-    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, overworld, autotracking, trackingport, sprite, compact)
+    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, overworld_url, autotracking, trackingport, sprite, compact)
+    print(url)
 
     return (url, width, height)
 
