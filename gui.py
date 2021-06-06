@@ -162,20 +162,20 @@ frm_track.grid(row=n, column=0, sticky=tk.W)
 
 # Door tracker
 var_door = tk.IntVar()
-chk_door = tk.Checkbutton(frm_track, text='Door tracker',variable=var_door, onvalue=1, offvalue=0)
+chk_door = tk.Checkbutton(frm_track, text='Door/Overworld',variable=var_door, onvalue=1, offvalue=0)
 chk_door.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
 
 # Sphere tracker
 var_sphere = tk.IntVar()
-chk_sphere = tk.Checkbutton(frm_track, text='Sphere tracker',variable=var_sphere, onvalue=1, offvalue=0)
+chk_sphere = tk.Checkbutton(frm_track, text='Sphere',variable=var_sphere, onvalue=1, offvalue=0)
 chk_sphere.grid(row=0, column=m, sticky=tk.W)
 
 m += 1
 
 # Map tracker
-lbl_map = tk.Label(frm_track, text='Map tracker/logic')
+lbl_map = tk.Label(frm_track, text='Map/Logic')
 lbl_map.grid(row=0, column=m, sticky=tk.W)
 
 m += 1

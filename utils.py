@@ -232,7 +232,7 @@ def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, t
                         break
 
             f = fdir + '/' + fname
-            shutil.move(seed.get(), f)
+            shutil.copy(seed.get(), f)
 
         except:
             info.config(text='An error occured while writing to the MSU directory.')
@@ -293,6 +293,7 @@ def pick_setting(weights, default=''):
 
 def tracker_url(door, sphere, map, logic, meta={'spoilers': 'mystery'}):
     door_url = 'C' if door else 'N'
+    overworld = 'F' if door else 'N'
     sphere_url = 'Y' if sphere else 'N'
     map_url = 'M' if map == 'Normal' else 'C' if map == 'Compact' else 'N'
     logic_url = 'O' if logic == 'OWG' else 'M' if logic == 'MG / No Logic' else 'N'
@@ -372,7 +373,7 @@ def tracker_url(door, sphere, map, logic, meta={'spoilers': 'mystery'}):
     sprite = 'Link'
     compact = '&map=C' if map_url == 'C' else ''
 
-    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, autotracking, trackingport, sprite, compact)
+    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, overworld, autotracking, trackingport, sprite, compact)
 
     return (url, width, height)
 
@@ -383,7 +384,7 @@ def help(master):
     window.resizable(width=False,height=False)
     window.iconbitmap('data/icon.ico')
 
-    txt_help = 'If you choose to use the default MSU Pack, your seed will be written to the MSU folder.\n\nPaths marked with a * or ** are optional\n\nIf tracker path is left empty, start tracker will then launch Dunka\'s one (requires Chrome).\n\nTracker options are specific to Dunka\'s one.\n\nIf all weights are set to zero, setting will be picked at random.\n\nAll configurations are saved when closing the program.'
+    txt_help = 'If you choose to use the default MSU Pack, your seed will be written to the MSU folder.\n\nPaths marked with a * or ** are optional\n\nIf tracker path is left empty, start tracker will then launch Dunka\'s one (requires Chrome).\n\nThe second line of checkboxes refers to Dunka\'s tracker options.\n\nIf all weights are set to zero, setting will be picked at random.\n\nAll configurations are saved when closing the program.'
 
     frm_help = tk.Frame(window, border=1)
     frm_help.grid(row=0, column=0, sticky=tk.W)
