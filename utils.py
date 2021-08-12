@@ -16,9 +16,9 @@ import random as rd
 
 msupacks = []
 
-default_cfg = {'rom': '', 'msu': '', 'emupath': '', 'timerpath': '', 'usbpath': '', 'trackpath': '', 'patch': 0, 'emu': 0, 'timer': 0, 'usb': 0, 'track': 0, 'door': 0, 'sphere' : 0, 'map': 'None', 'logic': 'No Glitches', 'speed': {'off': 0, 'double': 0, 'normal': 0, 'half': 0, 'quarter': 0}, 'color': {'red': 0, 'blue': 0, 'green': 0, 'yellow': 0}, 'bgm': 0, 'quickswap': 0, 'glitches': 0}
+default_cfg = {'rom': '', 'msu': '', 'emupath': '', 'timerpath': '', 'usbpath': '', 'trackpath': '', 'patch': 0, 'emu': 0, 'timer': 0, 'usb': 0, 'track': 0, 'door': 0, 'overworld': 0, 'sphere' : 0, 'map': 'None', 'logic': 'No Glitches', 'speed': {'off': 0, 'double': 0, 'normal': 0, 'half': 0, 'quarter': 0}, 'color': {'red': 0, 'blue': 0, 'green': 0, 'yellow': 0}, 'bgm': 0, 'quickswap': 0, 'glitches': 0}
 
-general_set = ['rom', 'msu', 'emupath', 'timerpath', 'usbpath', 'trackpath', 'patch', 'emu', 'timer', 'usb', 'track', 'door', 'sphere', 'map', 'logic', 'bgm', 'quickswap', 'glitches']
+general_set = ['rom', 'msu', 'emupath', 'timerpath', 'usbpath', 'trackpath', 'patch', 'emu', 'timer', 'usb', 'track', 'door', 'overworld', 'sphere', 'map', 'logic', 'bgm', 'quickswap', 'glitches']
 speed_set = ['off', 'double', 'normal', 'half', 'quarter']
 color_set = ['red', 'blue', 'green', 'yellow']
 
@@ -49,6 +49,10 @@ def refresh_msu(path, lst_msupack, var_msupack):
             msupacks.extend([])
 
     msupacks.sort()
+    for c in msupacks:
+        if '.sfc' in c:
+            msupacks.pop(msupacks.index(c))
+
     lst_msupack.children['menu'].delete(0,'end')
 
     for c in ['Default', 'Random']:
@@ -61,7 +65,7 @@ def refresh_msu(path, lst_msupack, var_msupack):
     var_msupack.set('Default')
 
 
-def load_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches):
+def load_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, overworld, sphere, map, logic, speed, color, bgm, quickswap, glitches):
     global default_cfg, general_set, speed_set, color_set
 
     try:
@@ -89,7 +93,7 @@ def load_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer
             color[var].set(default_cfg['color'][var])
 
 
-def save_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches):
+def save_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, overworld, sphere, map, logic, speed, color, bgm, quickswap, glitches):
     global default_cfg, general_set, speed_set, color_set
 
     cfg = default_cfg
@@ -364,13 +368,16 @@ def tracker_url(door, overworld, sphere, map, logic, meta={'spoilers': 'mystery'
             if 'Potpourri' in meta['name']:
                 dungeon = '0011'
 
+        if meta['logic'] == 'NoLogic':
+            dungeon = '1111'
+
     ambrosia = 'N'
     autotracking = 'Y'
     trackingport = '8080'
     sprite = 'Link'
     compact = '&map=C' if map_url == 'C' else ''
 
-    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, overworld_url, autotracking, trackingport, sprite, compact)
+    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}0{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, overworld_url, autotracking, trackingport, sprite, compact)
     print(url)
 
     return (url, width, height)

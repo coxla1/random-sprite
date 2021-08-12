@@ -388,7 +388,7 @@ lbl_info.grid(row=n, column=0, sticky=tk.W)
 btn_download.config(command=lambda: utils.helper(var_seed, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_emu, var_timer, var_usb, var_track, var_door, var_overworld, var_sphere, var_map, var_logic, var_glitches, var_msupack, btn_output, lbl_info))
 
 # Loading
-utils.load_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
+utils.load_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_overworld, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
 utils.refresh_msu(var_msu.get(), lst_msupack, var_msupack)
 sprites.build_dict()
 sprites.load_sprites()
@@ -398,5 +398,5 @@ var_patch.set(0)
 window.mainloop()
 
 # Quitting
-utils.save_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
+utils.save_cfg(var_rom, var_msu, var_emupath, var_timerpath, var_usbpath, var_trackpath, var_patch, var_emu, var_timer, var_usb, var_track, var_door, var_overworld, var_sphere, var_map, var_logic, var_speed, var_color, var_bgm, var_quickswap, var_glitches)
 sprites.save_sprites()
