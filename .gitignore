@@ -8,3 +8,4 @@ data/sprites.png
 data/list.json
 data/config.json
 api/*
+config.ini

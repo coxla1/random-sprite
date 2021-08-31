@@ -1,4 +1,4 @@
-from tkinter import filedialog as fd
+import transfer
 
 import os
 import subprocess
@@ -7,20 +7,14 @@ import threading
 
 import json
 import asyncio
-import webbrowser
-
-import tkinter as tk
 import pyz3r
-
 import random as rd
+import psutil
+import urllib.request
+
+from tkinter import filedialog as fd
 
 msupacks = []
-
-default_cfg = {'rom': '', 'msu': '', 'emupath': '', 'timerpath': '', 'usbpath': '', 'trackpath': '', 'patch': 0, 'emu': 0, 'timer': 0, 'usb': 0, 'track': 0, 'door': 0, 'overworld': 0, 'sphere' : 0, 'map': 'None', 'logic': 'No Glitches', 'speed': {'off': 0, 'double': 0, 'normal': 0, 'half': 0, 'quarter': 0}, 'color': {'red': 0, 'blue': 0, 'green': 0, 'yellow': 0}, 'bgm': 0, 'quickswap': 0, 'glitches': 0}
-
-general_set = ['rom', 'msu', 'emupath', 'timerpath', 'usbpath', 'trackpath', 'patch', 'emu', 'timer', 'usb', 'track', 'door', 'overworld', 'sphere', 'map', 'logic', 'bgm', 'quickswap', 'glitches']
-speed_set = ['off', 'double', 'normal', 'half', 'quarter']
-color_set = ['red', 'blue', 'green', 'yellow']
 
 class thread(threading.Thread):
     def __init__(self, cmd):
@@ -31,95 +25,94 @@ class thread(threading.Thread):
     def run(self):
         subprocess.call(self.cmd)
 
-def set_path(txt, type):
+def load_cfg(vars):
+    try:
+        with open('data/config.json', 'r') as cfgfile:
+            cfg = json.load(cfgfile)
+    except:
+        cfg = {}
+        for x in vars:
+            if x != 'seed' and x != 'uri':
+                if type(vars[x]) == type({}):
+                    cfg[x] = {}
+                    for y in vars[x]:
+                        cfg[x][y] = vars[x][y].get()
+
+                else:
+                    cfg[x] = vars[x].get()
+
+    for x in cfg:
+        if type(cfg[x]) == type({}):
+            for y in cfg[x]:
+                vars[x][y].set(cfg[x][y])
+
+        else:
+            vars[x].set(cfg[x])
+
+def save_cfg(vars):
+    cfg = {}
+    for x in vars:
+        if x != 'seed' and x != 'uri':
+            if type(vars[x]) == type({}):
+                cfg[x] = {}
+                for y in vars[x]:
+                    cfg[x][y] = vars[x][y].get()
+
+            else:
+                cfg[x] = vars[x].get()
+
+
+    with open('data/config.json', 'w') as cfgfile:
+        json.dump(cfg, cfgfile, indent=4)
+
+def set_path(var, entry, type):
+    entry.focus()
     if type == 'file':
         path = fd.askopenfilename()
     else:
         path = fd.askdirectory()
-    txt.set(path)
+    var.set(path)
 
-
-def refresh_msu(path, lst_msupack, var_msupack):
+def refresh_msu(var_msupath, input_msu, var_msu, mode, var_uri, input_fxpakfolders):
     global msupacks
     msupacks = []
-    if path:
-        try:
-            msupacks.extend(os.listdir(path))
-        except:
-            msupacks.extend([])
+
+    if mode.get() == 0: # Transfer
+        msupath = input_fxpakfolders.get(input_fxpakfolders.curselection())
+        msupacks = transfer.list_msupacks(var_uri.get(), msupath)
+
+    else: # Copy
+        if var_msupath.get():
+            try:
+                msupacks.extend(os.listdir(var_msupath.get()))
+            except:
+                msupacks.extend([])
 
     msupacks.sort()
-    for c in msupacks:
-        if '.sfc' in c:
-            msupacks.pop(msupacks.index(c))
+    for x in msupacks:
+        if '.sfc' in x:
+            msupacks.pop(msupacks.index(x))
 
-    lst_msupack.children['menu'].delete(0,'end')
+    input_msu.children['menu'].delete(0,'end')
 
-    for c in ['Default', 'Random']:
-        lst_msupack.children['menu'].add_command(label=c, command=lambda x=c: var_msupack.set(x))
+    for x in ['Default', 'Random']:
+        input_msu.children['menu'].add_command(label=x, command=lambda y=x: var_msu.set(y))
 
-    for c in msupacks:
-        lst_msupack.children['menu'].add_command(label=c, command=lambda x=c: var_msupack.set(x))
+    for x in msupacks:
+        input_msu.children['menu'].add_command(label=x, command=lambda y=x: var_msu.set(y))
 
     msupacks.append('Default')
-    var_msupack.set('Default')
 
 
-def load_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, overworld, sphere, map, logic, speed, color, bgm, quickswap, glitches):
-    global default_cfg, general_set, speed_set, color_set
+# async def gen_seed(rom, hash, speed, color, sprite, bgm, quickswap):
+#     base_rom = await pyz3r.rom.read(rom)
+#     seed = await pyz3r.alttpr(hash_id=hash)
+#     patched_rom = await seed.create_patched_game(base_rom, heartspeed=speed, heartcolor=color, spritename=sprite, music=bgm, quickswap=quickswap)
+#
+#     await pyz3r.rom.write(patched_rom, os.getcwd() + '/seed.sfc')
+#     return seed.data['spoiler']
 
-    try:
-        with open('data/config.json','r') as cfgfile:
-            cfg = json.load(cfgfile)
-    except:
-        cfg = default_cfg
-
-    for var in general_set:
-        try:
-            eval(var).set(cfg[var])
-        except:
-            eval(var).set(default_cfg[var])
-
-    for var in speed_set:
-        try:
-            speed[var].set(cfg['speed'][var])
-        except:
-            speed[var].set(default_cfg['speed'][var])
-
-    for var in color_set:
-        try:
-            color[var].set(cfg['color'][var])
-        except:
-            color[var].set(default_cfg['color'][var])
-
-
-def save_cfg(rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, overworld, sphere, map, logic, speed, color, bgm, quickswap, glitches):
-    global default_cfg, general_set, speed_set, color_set
-
-    cfg = default_cfg
-
-    for var in general_set:
-        cfg[var] = eval(var).get()
-
-    for var in speed_set:
-        cfg['speed'][var] = speed[var].get()
-
-    for var in color_set:
-        cfg['color'][var] = color[var].get()
-
-    with open('data/config.json','w') as cfgfile:
-        json.dump(cfg, cfgfile, indent=4)
-
-
-async def gen_seed(rom, hash, speed, color, sprite, bgm, quickswap):
-    base_rom = await pyz3r.rom.read(rom)
-    seed = await pyz3r.alttpr(hash_id=hash)
-    patched_rom = await seed.create_patched_game(base_rom, heartspeed=speed, heartcolor=color, spritename=sprite, music=bgm, quickswap=quickswap)
-
-    await pyz3r.rom.write(patched_rom, os.getcwd() + '/seed.sfc')
-    return seed.data['spoiler']
-
-
+# Rewrite later
 # def download(seed, rom, msu, emupath, timerpath, usbpath, trackpath, patch, emu, timer, usb, track, door, sphere, map, logic, speed, color, bgm, quickswap, glitches, msupack, sprites, output, info):
 #     global msupacks
 #
@@ -143,145 +136,112 @@ async def gen_seed(rom, hash, speed, color, sprite, bgm, quickswap):
 #             settings = asyncio.run(gen_seed(rom.get(), hash(seed.get()), pick_setting(speed_val, 'normal'), pick_setting(color_val, 'red'), sprite, bgm.get(), quickswap.get()))
 #         except:
 #             info.config(text='An error occured while patching the ROM.')
-#             return -1
-#
-#         # Choose MSU Pack
-#         try:
-#             pack = msupack.get()
-#             if pack == 'Random':
-#                 pack = msupacks[rd.randint(0, len(msupacks)-1)]
-#
-#             if pack == 'Default':
-#                 fdir = rom.get()[::-1]
-#                 i = fdir.index('/')
-#                 fdir = fdir[i:][::-1]
-#                 fname = 'seed.sfc'
-#             else:
-#                 fdir = msu.get() + '/' + pack
-#                 for f in os.listdir(fdir)[::-1]:
-#                     if f[-4:] == '.msu':
-#                         fname = (f[-5::-1])[::-1] + '.sfc'
-#                         break
-#
-#             f = fdir + '/' + fname
-#             shutil.move(os.getcwd() + '/seed.sfc', f)
-#
-#         except:
-#             info.config(text='An error occured while writing to the MSU directory.')
-#             return -1
-#
-#         # Start emulator
-#         if emu.get():
-#             t_emu = thread('"{:}" "{:}"'.format(emupath.get(), f))
-#             t_emu.start()
-#
-#         info.config(text='MSU Pack: ' + pack + ' // ' + 'Sprite: ' + sprite)
-#         output.config(state='normal', command=lambda: webbrowser.open('file://' + fdir))
-#
-#     # Start timer
-#     if timer.get():
-#         t_timer = thread(timerpath.get())
-#         t_timer.start()
-#
-#     # Start QUSB2SNES
-#     if usb.get():
-#         print('usb')
-#         t_usb = thread(usbpath.get())
-#         t_usb.start()
-#
-#     # Start tracker
-#     if track.get():
-#         if trackpath.get():
-#             t_tracker = thread(trackpath.get())
-#             t_tracker.start()
-#         else:
-#             if patch.get():
-#                 url, w, h = tracker_url(settings['meta']['spoilers'], door.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
-#             else:
-#                 url, w, h = tracker_url('mystery', door.get(), sphere.get(), map.get(), logic.get())
-#             t_tracker = thread('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(url, w+15, h+15))
-#             t_tracker.start()
+#             return -1 ...
 
+def run(vars, input_fxpakfolders, log):
+    global msupacks
+
+    log.config(text='')
+    process = [x.name() for x in psutil.process_iter()]
+
+    if vars['seed'].get():
+        hash = seed_hash(vars['seed'])
+        try:
+            settings = asyncio.run(seed_settings(hash))
+        except: # This could be used with other ROMs, e.g. AP MW ones
+            settings = []
+
+        # MSU Pack
+        try:
+            msu = vars['msu'].get()
+            if msu == 'Random':
+                msu = msupacks[rd.randint(0, len(msupacks)-1)]
+                vars['msu'].set(msu)
+
+            if msu == 'Default':
+                if vars['mode'].get() == 0: # Transfer
+                    destination_folder = input_fxpakfolders.get(input_fxpakfolders.curselection())
+                else: # Copy
+                    destination_folder = vars['msupath'].get()
+
+                filename = 'seed.sfc'
+
+            else:
+                if vars['mode'].get() == 0: # Transfer
+                    destination_folder = '{:}/{:}'.format(input_fxpakfolders.get(input_fxpakfolders.curselection()), msu)
+                    filename = transfer.find_msu_filename(vars['uri'].get(), destination_folder)
+                    print(destination_folder, filename)
+                else: # Copy
+                    destination_folder = '{:}{:}{:}'.format(vars['msupath'].get(), os.sep, msu)
+                    filename = ''
+                    for f in os.listdir(destination_folder)[::-1]:
+                        if f[-4:] == '.msu':
+                            filename = f[:-4] + '.sfc'
+                            break
+
+                if filename == '':
+                    log.config(text='Could not find .msu file in the pack directory')
+                    return -1
+
+            if vars['mode'].get() == 0: # Transfer
+                transfer.send_rom(vars['seed'].get(), vars['uri'].get(), f'{destination_folder}/{filename}')
+            else: # Copy
+                shutil.copy(vars['seed'].get(), f'{destination_folder}{os.sep}{filename}')
+
+
+        except:
+            log.config(text='An error occured while writing to destination folder')
+
+        # Boot ROM
+        if vars['autostart']['boot'].get() and vars['seed'].get():
+            if vars['mode'].get() == 0: # Transfer
+                transfer.boot_rom(vars['uri'].get(), f'{destination_folder}/{filename}')
+            else: # Copy
+                thread_emu = thread('"{:}" "{:}"'.format(vars['emulator'].get(), f'{destination_folder}{os.sep}{filename}'))
+                thread_emu.start()
+
+    # Timer
+    if vars['autostart']['timer'].get() and not process_is_running(vars['timer'].get(), process):
+        thread_timer = thread(vars['timer'].get())
+        thread_timer.start()
+
+    # Tracker
+    if vars['autostart']['tracker'].get():
+        if vars['tracker'].get() and not process_is_running(vars['tracker'].get(), process):
+            thread_tracker = thread(vars['tracker'].get())
+            thread_tracker.start()
+
+        elif '/' not in vars['tracker'].get():
+            if vars['seed'].get() and settings:
+                url, width, height = dunka_url(vars, log, settings['meta'])
+            else:
+                url, width, height = dunka_url(vars, log)
+
+            thread_tracker = thread(f'cmd /c start msedge --app="{url}" --user-data-dir="%tmp%\rdmsprite_dunkatracker" --window-position=10,10 --window-size={width},{height}')
+            thread_tracker.start()
+
+    # SNI/QUSB2SNES
+    if vars['autostart']['usbinterface'].get() and not process_is_running(vars['usbinterface'].get(), process):
+        thread_usbinterface = thread(vars['usbinterface'].get())
+        thread_usbinterface.start()
+
+def seed_hash(input_seed):
+    if '.sfc' in input_seed.get(): # File provided
+        hash = input_seed.get()[-14:-4]
+    else: # URL or hash
+        url = input_seed.get()
+        if '/' in url:
+            url = url[::-1]
+            hash = url[:url.find('/')][::-1]
+        else:
+            hash = url
+    return hash
 
 async def seed_settings(hash):
     seed = await pyz3r.alttpr(hash_id=hash)
     return seed.data['spoiler']
 
-
-def helper(seed, msu, emupath, timerpath, usbpath, trackpath, emu, timer, usb, track, door, overworld, sphere, map, logic, glitches, msupack, output, info):
-    global msupacks
-
-    if seed.get():
-        hash = seed.get()[-14:-4]
-        try:
-            settings = asyncio.run(seed_settings(hash))
-        except:
-            settings = []
-
-        # Choose MSU Pack
-        try:
-            pack = msupack.get()
-            if pack == 'Random':
-                pack = msupacks[rd.randint(0, len(msupacks)-1)]
-
-            if pack == 'Default':
-                fdir = msu.get()
-                fname = 'seed.sfc'
-            else:
-                fdir = msu.get() + '/' + pack
-                for f in os.listdir(fdir)[::-1]:
-                    if f[-4:] == '.msu':
-                        fname = (f[-5::-1])[::-1] + '.sfc'
-                        break
-
-            f = fdir + '/' + fname
-            shutil.copy(seed.get(), f)
-
-        except:
-            info.config(text='An error occured while writing to the MSU directory.')
-            return -1
-
-        # Start emulator
-        if emu.get():
-            t_emu = thread('"{:}" "{:}"'.format(emupath.get(), f))
-            t_emu.start()
-
-        info.config(text='MSU Pack: ' + pack)
-        output.config(state='normal', command=lambda: webbrowser.open('file://' + fdir))
-
-    # Start timer
-    if timer.get():
-        t_timer = thread(timerpath.get())
-        t_timer.start()
-
-    # Start QUSB2SNES
-    if usb.get():
-        t_usb = thread(usbpath.get())
-        t_usb.start()
-
-    # Start tracker
-    if track.get():
-        if trackpath.get():
-            t_tracker = thread(trackpath.get())
-            t_tracker.start()
-        else:
-            if seed.get() and settings:
-                url, w, h = tracker_url(door.get(), overworld.get(), sphere.get(), map.get(), logic.get(), settings['meta'])
-            else:
-                url, w, h = tracker_url(door.get(), overworld.get(), sphere.get(), map.get(), logic.get())
-            t_tracker = thread('cmd /c start chrome --app="{:}" --user-data-dir="%tmp%\chrome_tmp_dir_tracker" --chrome-frame --window-position=10,10 --window-size={:},{:}'.format(url, w+15, h+15))
-            t_tracker.start()
-
-
-def hash(url):
-    if '/' in url:
-        tmp = url[::-1]
-        h = tmp[:tmp.find('/')][::-1]
-    else:
-        h = url
-    return h
-
-
+# ok but useless atm
 def pick_setting(weights, default=''):
     l = []
     for x in weights:
@@ -292,107 +252,236 @@ def pick_setting(weights, default=''):
     return l[rd.randint(0, len(l)-1)]
 
 
-def tracker_url(door, overworld, sphere, map, logic, meta={'spoilers': 'mystery'}):
-    door_url = 'C' if door else 'N'
-    overworld_url = 'F' if overworld else 'N'
-    sphere_url = 'Y' if sphere else 'N'
-    map_url = 'M' if map == 'Normal' else 'C' if map == 'Compact' else 'N'
-    logic_url = 'O' if logic == 'OWG' else 'M' if logic == 'MG / No Logic' else 'N'
+def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
+    # Determine URL format
+    with urllib.request.urlopen('https://raw.githubusercontent.com/bigdunka/alttptracker/master/js/index.js') as u:
+        trackerjs = u.read().decode('utf-8')
 
-    width = 1340 if map_url == 'M' else 448
-    if sphere_url == 'Y':
-        height = 988 if map_url == 'C' else 764
-    else:
-        height = 692 if map_url == 'C' else 468
+    i = len('trackerWindow = window.open(')
+    j = trackerjs.index('trackerWindow')
+    k = trackerjs[j:].index('\n')
+    urlformat = 'f' + trackerjs[j+i:j+k]
 
-    if meta['spoilers'] == 'mystery':
-        trackername = 'tracker'
+    # Define variables
+    if settings['spoilers'] == 'mystery':
+        tracker = 'tracker'
         type = 'O'
         entrance = 'N'
         boss = 'S'
         enemy = 'S'
+        glitches = {'No Glitches': 'N', 'OWG': 'O', 'MG / No Logic': 'M'}[vars['dunkatracker']['maplogic'].get()]
         item = 'A'
-
         goal = 'G'
-
         tower = 'R'
         towercrystals = '7'
         ganon = 'R'
         ganoncrystals = '7'
-
         swords = 'R'
+        map = {'None': 'N', 'Normal': 'M', 'Compact': 'C'}[vars['dunkatracker']['mapdisplay'].get()]
         spoiler = 'N'
+        sphere = {0: 'N', 1: 'Y'}[vars['dunkatracker']['sphere'].get()]
         mystery = 'S'
-
-        dungeon = '1111'
+        door = {0: 'N', 1: 'C'}[vars['dunkatracker']['door'].get()]
+        shuffledmaps = '1'
+        shuffledcompasses = '1'
+        shuffledsmallkeys = '1'
+        shuffledbigkeys = '1'
+        ambrosia = 'N'
+        overworld = {0: 'N', 1: 'F'}[vars['dunkatracker']['overworld'].get()]
+        autotracking = {0: 'N', 1: 'Y'}[vars['dunkatracker']['autotracker'].get()]
+        trackingport = '8080'
+        sprite = 'Link'
+        compact = '&map=C' if map == 'C' else ''
+        startingboots = 'N'
+        startingflute = 'N'
+        startinghookshot = 'N'
+        startingicerod = 'N'
 
     else:
-        trackername = 'entrancetracker' if 'shuffle' in meta else 'tracker'
-        type = meta['mode'][0].upper()
-        entrance = 'S' if 'shuffle' in meta else 'N'
-        boss = 'N' if meta['enemizer.boss_shuffle'] == 'none' else 'S'
-        enemy = 'N' if meta['enemizer.enemy_shuffle'] == 'none' else 'S'
+        tracker = 'entrancetracker' if 'shuffle' in settings else 'tracker'
+        type = {'open': 'O', 'standard': 'S', 'inverted': 'I', 'retro': 'R'}[settings['mode']]
+        entrance = 'S' if 'shuffle' in settings else 'N'
+        boss = 'N' if settings['enemizer.boss_shuffle'] == 'none' else 'S'
+        enemy = 'N' if settings['enemizer.enemy_shuffle'] == 'none' else 'S'
+        glitches = {'No Glitches': 'N', 'OWG': 'O', 'MG / No Logic': 'M'}[vars['dunkatracker']['maplogic'].get()]
         item = 'A'
-
-        goal = meta['goal'][0].upper()
-        if goal not in ['G','F','P']:
-            if 'dungeons' in meta['goal']:
-                goal = 'A'
-            else:
-                goal = 'O'
-
-        towercrystals = meta['entry_crystals_tower'][0].upper()
-        if towercrystals == 'R':
-            tower = 'R'
-            towercrystals = '7'
-        else:
-            tower = 'C'
-
-        ganoncrystals = meta['entry_crystals_ganon'][0].upper()
-        if ganoncrystals == 'R':
-            ganon = 'R'
-            ganoncrystals = '7'
-        else:
-            ganon = 'C'
-
-        swords = meta['weapons'][0].upper()
+        goal = {'ganon': 'G', 'fast_ganon': 'F', 'pedestal': 'P', 'dungeons': 'A', 'triforce-hunt': 'O'}[settings['goal']]
+        tower = 'R' if settings['entry_crystals_tower'] == 'random' else 'C'
+        towercrystals = '7' if settings['entry_crystals_tower'] == 'random' else settings['entry_crystals_tower']
+        ganon = 'R' if settings['entry_crystals_ganon'] == 'random' else 'C'
+        ganoncrystals = '7' if settings['entry_crystals_tower'] == 'random' else settings['entry_crystals_ganon']
+        swords = {'randomized': 'R', 'assured': 'A', 'vanilla': 'V', 'swordless': 'S'}[settings['weapons']]
+        map = {'None': 'N', 'Normal': 'M', 'Compact': 'C'}[vars['dunkatracker']['mapdisplay'].get()]
         spoiler = 'N'
+        sphere = {0: 'N', 1: 'Y'}[vars['dunkatracker']['sphere'].get()]
         mystery = 'N'
+        door = {0: 'N', 1: 'C'}[vars['dunkatracker']['door'].get()]
 
-        if len(meta['dungeon_items']) > 4: # Standard shuffle
-            dungeon = '0000'
-        else:
-            dungeon = len(meta['dungeon_items'])*'1' + (4-len(meta['dungeon_items']))*'0'
+        shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = {'standard': ('0', '0', '0', '0'), 'mc': ('1', '1', '0', '0'), 'mcs': ('1', '1', '1', '0'), 'full': ('1', '1', '1', '1')}[settings['dungeon_items']]
 
-        if 'name' in meta:
-            if 'Potpourri' in meta['name']:
-                dungeon = '0011'
+        if 'name' in settings:
+            if 'Potpourri' in settings['name']:
+                shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '0', '0', '1', '1'
+            else: # Not a standard mode, default to keysanity tracker
+                shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '1', '1', '1', '1'
 
-        if meta['logic'] == 'NoLogic':
-            dungeon = '1111'
+        if settings['logic'] == 'NoLogic':
+            shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '1', '1', '1', '1'
 
-    ambrosia = 'N'
-    autotracking = 'Y'
-    trackingport = '8080'
-    sprite = 'Link'
-    compact = '&map=C' if map_url == 'C' else ''
+        ambrosia = 'N'
+        overworld = {0: 'N', 1: 'F'}[vars['dunkatracker']['overworld'].get()]
+        autotracking = {0: 'N', 1: 'Y'}[vars['dunkatracker']['autotracker'].get()]
+        trackingport = '8080'
+        sprite = 'Link'
+        compact = '&map=C' if map == 'C' else ''
+        startingboots = 'N'
+        startingflute = 'N'
+        startinghookshot = 'N'
+        startingicerod = 'N'
 
-    url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}0{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, overworld_url, autotracking, trackingport, sprite, compact)
-    print(url)
+    # This should work if Dunka adds a new variable
+    flag = True
+    newvar = []
+    while flag:
+        try:
+            url = 'https://alttptracker.dunka.net/{:}'.format(eval(urlformat))
+            flag = False
+        except NameError as e:
+            i = e[6:].index('\'')
+            newvar.append(e[6:6+i])
+            eval('{:} = \'N\''.format(e[6:6+i]))
 
-    return (url, width, height)
+    if newvar:
+        log.config(text='New Dunka variables : {:}'.format(','.join(newvar)))
 
-def help(master):
+    width = 1340 if map == 'M' else 448
+    height = (988 if map == 'C' else 744) if sphere == 'Y' else (692 if map == 'C' else 448)
 
-    window = tk.Toplevel(master)
-    window.title('Help')
-    window.resizable(width=False,height=False)
-    window.iconbitmap('data/icon.ico')
+    return url, width+15, height+15+20
 
-    txt_help = 'If you choose to use the default MSU Pack, your seed will be written to the MSU folder.\n\nPaths marked with a * or ** are optional\n\nIf tracker path is left empty, start tracker will then launch Dunka\'s one (requires Chrome).\n\nThe second line of checkboxes refers to Dunka\'s tracker options.\n\nIf all weights are set to zero, setting will be picked at random.\n\nAll configurations are saved when closing the program.'
 
-    frm_help = tk.Frame(window, border=1)
-    frm_help.grid(row=0, column=0, sticky=tk.W)
+# old
+# def tracker_url(door, overworld, sphere, map, logic, meta={'spoilers': 'mystery'}):
+#     door_url = 'C' if door else 'N'
+#     overworld_url = 'F' if overworld else 'N'
+#     sphere_url = 'Y' if sphere else 'N'
+#     map_url = 'M' if map == 'Normal' else 'C' if map == 'Compact' else 'N'
+#     logic_url = 'O' if logic == 'OWG' else 'M' if logic == 'MG / No Logic' else 'N'
+#
+#     width = 1340 if map_url == 'M' else 448
+#     if sphere_url == 'Y':
+#         height = 988 if map_url == 'C' else 764
+#     else:
+#         height = 692 if map_url == 'C' else 468
+#
+#     if meta['spoilers'] == 'mystery':
+#         trackername = 'tracker'
+#         type = 'O'
+#         entrance = 'N'
+#         boss = 'S'
+#         enemy = 'S'
+#         item = 'A'
+#
+#         goal = 'G'
+#
+#         tower = 'R'
+#         towercrystals = '7'
+#         ganon = 'R'
+#         ganoncrystals = '7'
+#
+#         swords = 'R'
+#         spoiler = 'N'
+#         mystery = 'S'
+#
+#         dungeon = '1111'
+#
+#     else:
+#         trackername = 'entrancetracker' if 'shuffle' in meta else 'tracker'
+#         type = meta['mode'][0].upper()
+#         entrance = 'S' if 'shuffle' in meta else 'N'
+#         boss = 'N' if meta['enemizer.boss_shuffle'] == 'none' else 'S'
+#         enemy = 'N' if meta['enemizer.enemy_shuffle'] == 'none' else 'S'
+#         item = 'A'
+#
+#         goal = meta['goal'][0].upper()
+#         if goal not in ['G','F','P']:
+#             if 'dungeons' in meta['goal']:
+#                 goal = 'A'
+#             else:
+#                 goal = 'O'
+#
+#         towercrystals = meta['entry_crystals_tower'][0].upper()
+#         if towercrystals == 'R':
+#             tower = 'R'
+#             towercrystals = '7'
+#         else:
+#             tower = 'C'
+#
+#         ganoncrystals = meta['entry_crystals_ganon'][0].upper()
+#         if ganoncrystals == 'R':
+#             ganon = 'R'
+#             ganoncrystals = '7'
+#         else:
+#             ganon = 'C'
+#
+#         swords = meta['weapons'][0].upper()
+#         spoiler = 'N'
+#         mystery = 'N'
+#
+#         if len(meta['dungeon_items']) > 4: # Standard shuffle
+#             dungeon = '0000'
+#         else:
+#             dungeon = len(meta['dungeon_items'])*'1' + (4-len(meta['dungeon_items']))*'0'
+#
+#         if 'name' in meta:
+#             if 'Potpourri' in meta['name']:
+#                 dungeon = '0011'
+#
+#         if meta['logic'] == 'NoLogic':
+#             dungeon = '1111'
+#
+#     ambrosia = 'N'
+#     autotracking = 'Y'
+#     trackingport = '8080'
+#     sprite = 'Link'
+#     compact = '&map=C' if map_url == 'C' else ''
+#
+#     url = 'https://alttptracker.dunka.net/{:}.html?f={:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}0{:}{:}{:}{:}{:}{:}{:}{:}{:}{:}&sprite={:}{:}&starting=NNNN'.format(trackername, type, entrance, boss, enemy, logic_url, item, goal, tower, towercrystals, ganon, ganoncrystals, swords, map_url, spoiler, sphere_url, mystery, door_url, dungeon, ambrosia, overworld_url, autotracking, trackingport, sprite, compact)
+#     print(url)
+#
+#     return (url, width, height)
 
-    lbl_help = tk.Label(frm_help, text=txt_help)
-    lbl_help.grid(row=0, column=0, sticky=tk.W)
+def process_is_running(exe_path, process_list):
+    process_name = exe_path[::-1]
+    try:
+        i = process_name.index('/')
+        process_name = process_name[:i][::-1]
+    except:
+        process_name = ''
+
+    return process_name in process_list
+
+def switch_frame(enable_children, disable_children):
+    for child in enable_children:
+        child.configure(state='normal')
+    for child in disable_children:
+        child.configure(state='disabled')
+
+def on_entry_click(entry):
+    if entry.cget('fg') == 'grey':
+       entry.delete(0, 'end')
+       entry.insert(0, '')
+       entry.config(fg = 'black')
+
+def on_focusout(entry, default_text):
+    if entry.get() == '':
+        entry.insert(0, default_text)
+        entry.config(fg = 'grey')
+
+def set_default_text(entry, text):
+    entry.bind('<FocusIn>', lambda event: on_entry_click(entry))
+    entry.bind('<FocusOut>', lambda event: on_focusout(entry, text))
+    if entry.get() == '':
+        entry.insert(0, text)
+    if entry.get() == text:
+        entry.config(fg = 'grey')
