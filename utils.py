@@ -11,8 +11,10 @@ import pyz3r
 import random as rd
 import psutil
 import urllib.request
+import requests
 
 from tkinter import filedialog as fd
+from tkinter import messagebox
 
 msupacks = []
 
@@ -138,7 +140,7 @@ def refresh_msu(var_msupath, input_msu, var_msu, mode, var_uri, input_fxpakfolde
 #             info.config(text='An error occured while patching the ROM.')
 #             return -1 ...
 
-def run(vars, input_fxpakfolders, log):
+def run(vars, input_fxpakfolders, default, log):
     global msupacks
 
     log.config(text='')
@@ -146,10 +148,23 @@ def run(vars, input_fxpakfolders, log):
 
     if vars['seed'].get():
         hash = seed_hash(vars['seed'])
-        try:
-            settings = asyncio.run(seed_settings(hash))
-        except: # This could be used with other ROMs, e.g. AP MW ones
-            settings = []
+        print(f'Seed hash: {hash}')
+        settings = seed_settings(hash)
+        # settings = asyncio.run(seed_settings(hash))
+        if settings:
+            print('Found settings:')
+            for x in settings['meta']:
+                print('\t{:}: {:}'.format(x, settings['meta'][x]))
+        else:
+            print('No settings found')
+        # try:
+        #     settings = asyncio.run(seed_settings(hash))
+        # except: # This could be used with other ROMs, e.g. AP MW ones
+        #     settings = []
+        # print(f'Seed hash: {hash}')
+        # print('Found settings:')
+        # for x in settings:
+        #     print(f'\t{x}')
 
         # MSU Pack
         try:
@@ -170,7 +185,6 @@ def run(vars, input_fxpakfolders, log):
                 if vars['mode'].get() == 0: # Transfer
                     destination_folder = '{:}/{:}'.format(input_fxpakfolders.get(input_fxpakfolders.curselection()), msu)
                     filename = transfer.find_msu_filename(vars['uri'].get(), destination_folder)
-                    print(destination_folder, filename)
                 else: # Copy
                     destination_folder = '{:}{:}{:}'.format(vars['msupath'].get(), os.sep, msu)
                     filename = ''
@@ -183,6 +197,12 @@ def run(vars, input_fxpakfolders, log):
                     log.config(text='Could not find .msu file in the pack directory')
                     return -1
 
+            print(f'MSU: {msu}')
+
+            print('Transfer type: {:}'.format('Copy' if vars['mode'].get() else 'USB'))
+            print(f'Destination folder: {destination_folder}')
+            print(f'Filename: {filename}')
+
             if vars['mode'].get() == 0: # Transfer
                 transfer.send_rom(vars['seed'].get(), vars['uri'].get(), f'{destination_folder}/{filename}')
             else: # Copy
@@ -190,44 +210,76 @@ def run(vars, input_fxpakfolders, log):
 
 
         except:
-            log.config(text='An error occured while writing to destination folder')
+            log.config(text='An error occured while writing to destination folder, if using USB transfer consider turning SNES OFF/ON')
 
         # Boot ROM
         if vars['autostart']['boot'].get() and vars['seed'].get():
             if vars['mode'].get() == 0: # Transfer
                 transfer.boot_rom(vars['uri'].get(), f'{destination_folder}/{filename}')
-            else: # Copy
+            elif vars['emulator'].get() != default['emulator']: # Copy
                 thread_emu = thread('"{:}" "{:}"'.format(vars['emulator'].get(), f'{destination_folder}{os.sep}{filename}'))
                 thread_emu.start()
 
     # Timer
-    if vars['autostart']['timer'].get() and not process_is_running(vars['timer'].get(), process):
+    if vars['autostart']['timer'].get() and vars['timer'].get() != default['timer'] and not process_is_running(vars['timer'].get(), process):
         thread_timer = thread(vars['timer'].get())
         thread_timer.start()
 
     # Tracker
     if vars['autostart']['tracker'].get():
-        if vars['tracker'].get() and not process_is_running(vars['tracker'].get(), process):
-            thread_tracker = thread(vars['tracker'].get())
-            thread_tracker.start()
+        if vars['tracker'].get() != default['tracker']:
+            if not process_is_running(vars['tracker'].get(), process):
+                thread_tracker = thread(vars['tracker'].get())
+                thread_tracker.start()
 
-        elif '/' not in vars['tracker'].get():
+        else:
             if vars['seed'].get() and settings:
                 url, width, height = dunka_url(vars, log, settings['meta'])
             else:
                 url, width, height = dunka_url(vars, log)
 
+            print(f'Dunka\'s URL: {url}')
+
             thread_tracker = thread(f'cmd /c start msedge --app="{url}" --user-data-dir="%tmp%\rdmsprite_dunkatracker" --window-position=10,10 --window-size={width},{height}')
             thread_tracker.start()
 
     # SNI/QUSB2SNES
-    if vars['autostart']['usbinterface'].get() and not process_is_running(vars['usbinterface'].get(), process):
+    if vars['autostart']['usbinterface'].get() and vars['usbinterface'].get() != default['usbinterface'] and not process_is_running(vars['usbinterface'].get(), process):
         thread_usbinterface = thread(vars['usbinterface'].get())
         thread_usbinterface.start()
 
+    if vars['dunkatracker']['door'].get() == 'Crossed/Keydrop':
+        keycount = 'Dungeon: total keys/dropped keys\n'
+        keycount += 'Hyrule Castle: 4(+1 BK)/3(+1 BK)\n'
+        keycount += 'Eastern Palace: 2/2\n'
+        keycount += 'Desert Palace: 4/3\n'
+        keycount += 'Tower of Hera: 1/0\n'
+        keycount += 'Castle Tower: 4/2\n'
+        keycount += 'Palace of Darkness: 6/0\n'
+        keycount += 'Swamp Palace: 6/5\n'
+        keycount += 'Skull Woods: 5/2\n'
+        keycount += 'Thieves\' Town: 3/2\n'
+        keycount += 'Ice Palace: 5/3\n'
+        keycount += 'Misery Mire: 6/3\n'
+        keycount += 'Turtle Rock: 6/2\n'
+        keycount += 'Ganon\'s Tower: 8/4\n'
+        messagebox.showinfo('Keydrop keys count', keycount)
+
+
 def seed_hash(input_seed):
     if '.sfc' in input_seed.get(): # File provided
-        hash = input_seed.get()[-14:-4]
+        # print('ici')
+        # hash = input_seed.get()[-14:-4]
+        f = open(input_seed.get(), 'rb')
+        f.read(32704)
+        hash = bytearray.fromhex(f.read(13).hex()).decode()
+        f.close()
+        # print(hash)
+        if hash[:2] == 'VT':
+            hash = str(hash[3:])
+        else:
+            hash = None
+        # print(hash)
     else: # URL or hash
         url = input_seed.get()
         if '/' in url:
@@ -237,9 +289,20 @@ def seed_hash(input_seed):
             hash = url
     return hash
 
-async def seed_settings(hash):
-    seed = await pyz3r.alttpr(hash_id=hash)
-    return seed.data['spoiler']
+# async def seed_settings(hash):
+#     seed = await pyz3r.alttpr(hash_id=hash)
+#     return seed.data['spoiler']
+
+def seed_settings(hash):
+    if hash:
+        url = f'https://alttpr-patch-data.s3.us-east-2.amazonaws.com/{hash}.json'
+        with requests.get(url) as r:
+            settings = r.json()['spoiler']
+    else:
+        settings = []
+
+    return settings
+
 
 # ok but useless atm
 def pick_setting(weights, default=''):
@@ -269,7 +332,7 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
         entrance = 'N'
         boss = 'S'
         enemy = 'S'
-        glitches = {'No Glitches': 'N', 'OWG': 'O', 'MG / No Logic': 'M'}[vars['dunkatracker']['maplogic'].get()]
+        glitches = {'No Glitches': 'N', 'OWG': 'O', 'MG/No Logic': 'M'}[vars['dunkatracker']['maplogic'].get()]
         item = 'A'
         goal = 'G'
         tower = 'R'
@@ -281,13 +344,13 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
         spoiler = 'N'
         sphere = {0: 'N', 1: 'Y'}[vars['dunkatracker']['sphere'].get()]
         mystery = 'S'
-        door = {0: 'N', 1: 'C'}[vars['dunkatracker']['door'].get()]
+        door = {'None': 'N', 'Basic': 'B', 'Crossed/Keydrop': 'C'}[vars['dunkatracker']['door'].get()]
         shuffledmaps = '1'
         shuffledcompasses = '1'
         shuffledsmallkeys = '1'
         shuffledbigkeys = '1'
         ambrosia = 'N'
-        overworld = {0: 'N', 1: 'F'}[vars['dunkatracker']['overworld'].get()]
+        overworld = {'None': 'N', 'Mixed/Crossed/Misc': 'O', 'Parallel': 'P', 'Full': 'F'}[vars['dunkatracker']['overworld'].get()]
         autotracking = {0: 'N', 1: 'Y'}[vars['dunkatracker']['autotracker'].get()]
         trackingport = '8080'
         sprite = 'Link'
@@ -303,7 +366,7 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
         entrance = 'S' if 'shuffle' in settings else 'N'
         boss = 'N' if settings['enemizer.boss_shuffle'] == 'none' else 'S'
         enemy = 'N' if settings['enemizer.enemy_shuffle'] == 'none' else 'S'
-        glitches = {'No Glitches': 'N', 'OWG': 'O', 'MG / No Logic': 'M'}[vars['dunkatracker']['maplogic'].get()]
+        glitches = {'No Glitches': 'N', 'OWG': 'O', 'MG/No Logic': 'M'}[vars['dunkatracker']['maplogic'].get()]
         item = 'A'
         goal = {'ganon': 'G', 'fast_ganon': 'F', 'pedestal': 'P', 'dungeons': 'A', 'triforce-hunt': 'O'}[settings['goal']]
         tower = 'R' if settings['entry_crystals_tower'] == 'random' else 'C'
@@ -314,22 +377,21 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
         map = {'None': 'N', 'Normal': 'M', 'Compact': 'C'}[vars['dunkatracker']['mapdisplay'].get()]
         spoiler = 'N'
         sphere = {0: 'N', 1: 'Y'}[vars['dunkatracker']['sphere'].get()]
-        mystery = 'N'
-        door = {0: 'N', 1: 'C'}[vars['dunkatracker']['door'].get()]
+        mystery = 'S'
+        door = {'None': 'N', 'Basic': 'B', 'Crossed/Keydrop': 'C'}[vars['dunkatracker']['door'].get()]
 
         shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = {'standard': ('0', '0', '0', '0'), 'mc': ('1', '1', '0', '0'), 'mcs': ('1', '1', '1', '0'), 'full': ('1', '1', '1', '1')}[settings['dungeon_items']]
 
         if 'name' in settings:
             if 'Potpourri' in settings['name']:
                 shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '0', '0', '1', '1'
-            else: # Not a standard mode, default to keysanity tracker
-                shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '1', '1', '1', '1'
+            log.config('You may have to adjust settings using the ? icon in the top-left corner')
 
         if settings['logic'] == 'NoLogic':
             shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '1', '1', '1', '1'
 
         ambrosia = 'N'
-        overworld = {0: 'N', 1: 'F'}[vars['dunkatracker']['overworld'].get()]
+        overworld = {'None': 'N', 'Mixed/Crossed/Misc': 'O', 'Parallel': 'P', 'Full': 'F'}[vars['dunkatracker']['overworld'].get()]
         autotracking = {0: 'N', 1: 'Y'}[vars['dunkatracker']['autotracker'].get()]
         trackingport = '8080'
         sprite = 'Link'
@@ -351,8 +413,10 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
             newvar.append(e[6:6+i])
             eval('{:} = \'N\''.format(e[6:6+i]))
 
+    for x in newvar:
+        print(f'Dunka\'s tracker new variable: {x}')
     if newvar:
-        log.config(text='New Dunka variables : {:}'.format(','.join(newvar)))
+        log.config(text='New variable found for Dunka\'s tracker! Please advise Coxla#2119 on Discord')
 
     width = 1340 if map == 'M' else 448
     height = (988 if map == 'C' else 744) if sphere == 'Y' else (692 if map == 'C' else 448)

@@ -3,10 +3,14 @@ import utils
 import transfer
 # import sprites
 
+# TODO : debug print picked options when this will be back
+# TODO : fix (?) check process tracker : I can't because that would mean checking if msedge is running, which might be the case
+# TODO : sprites
+
 window = tk.Tk()
 
 # Window settings
-window.title('Seed downloader')
+window.title('ALTTPR Helper')
 window.resizable(width=False,height=False)
 window.iconbitmap('data/icon.ico')
 
@@ -22,33 +26,7 @@ lbl_dict = {}
 input_dict = {}
 btn_dict = {}
 var_dict = {}
-
-# frm_dict
-# # main, mode, transfer, copy, misc, autostart, dunkatracker, dunkamap, dunkatoggle, postgen, heart, gameoptions, sprites, msu
-
-# lbl_dict
-# # seed, rom, mode, detect, fxpakfolders, emulator, msupath, timer, tracker, usbinterface, mapdisplay, maplogic, heartspeed, heartcolor, msu, log
-# # # heartspeed: dict
-# # # heartcolor: dict
-
-# input_dict
-# # seed, rom, mode, fxpakfolders, emulator, msupath, timer, tracker, usbinterface, autostart, dunkatracker, heartspeed, heartcolor, backgroundmusic, quickswap, linksprite, msu
-# # # mode : list
-# # # autostart : dict
-# # # dunkatracker : dict
-# # # heartspeed : dict
-# # # heartcolor : dict
-
-# btn_dict
-# # seed, rom, detect, emulator, msupath, timer, tracker, usbinterfacse, editsprites, updatesprites, msu, run
-
-# var_dict
-# # seed, rom, mode, emulator, msupath, tracker, usbinterface, autostart, dunkatracker, heartspeed, heartcolor, backgroundmusic, quickswap, linksprite, msu, uri
-# # # autostart : dict
-# # # dunkatracker : dict
-# # # heartspeed : dict
-# # # heartcolor : dict
-
+default_dict = {}
 
 ## Main settings
 m = 0
@@ -117,7 +95,7 @@ var_dict['uri'] = tk.StringVar()
 lbl_dict['fxpakfolders'] = tk.Label(frm_dict['transfer'], text='MSU folder', width=LBL_WIDTH, anchor=tk.W)
 lbl_dict['fxpakfolders'].grid(row=m, column=0)
 
-input_dict['fxpakfolders'] = tk.Listbox(frm_dict['transfer'], width=ENTRY_WIDTH+BTN_WIDTH, height=7)
+input_dict['fxpakfolders'] = tk.Listbox(frm_dict['transfer'], width=ENTRY_WIDTH+BTN_WIDTH, height=4)
 input_dict['fxpakfolders'].grid(row=m, column=1, sticky=tk.W)
 
 n += 1
@@ -134,10 +112,10 @@ lbl_dict['emulator'].grid(row=m, column=0)
 var_dict['emulator'] = tk.StringVar()
 input_dict['emulator'] = tk.Entry(frm_dict['copy'], width=ENTRY_WIDTH, exportselection=0, textvariable=var_dict['emulator'])
 input_dict['emulator'].grid(row=m, column=1)
+default_dict['emulator'] = 'Optional'
 
 btn_dict['emulator'] = tk.Button(frm_dict['copy'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['emulator'], input_dict['emulator'], 'file'))
 btn_dict['emulator'].grid(row=m, column=2)
-
 m += 1
 
 # MSU
@@ -147,6 +125,7 @@ lbl_dict['msupath'].grid(row=m, column=0)
 var_dict['msupath'] = tk.StringVar()
 input_dict['msupath'] = tk.Entry(frm_dict['copy'], width=ENTRY_WIDTH, exportselection=0, textvariable=var_dict['msupath'])
 input_dict['msupath'].grid(row=m, column=1)
+default_dict['msupath'] = 'Seed will be written there if default music used'
 
 btn_dict['msupath'] = tk.Button(frm_dict['copy'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['msupath'], input_dict['msupath'], 'dir'))
 btn_dict['msupath'].grid(row=m, column=2)
@@ -165,6 +144,7 @@ lbl_dict['timer'].grid(row=m, column=0)
 var_dict['timer'] = tk.StringVar()
 input_dict['timer'] = tk.Entry(frm_dict['misc'], width=ENTRY_WIDTH, exportselection=0, textvariable=var_dict['timer'])
 input_dict['timer'].grid(row=m, column=1)
+default_dict['timer'] = 'Optional'
 
 btn_dict['timer'] = tk.Button(frm_dict['misc'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['timer'], input_dict['timer'], 'file'))
 btn_dict['timer'].grid(row=m, column=2)
@@ -178,6 +158,7 @@ lbl_dict['tracker'].grid(row=m, column=0)
 var_dict['tracker'] = tk.StringVar()
 input_dict['tracker'] = tk.Entry(frm_dict['misc'], width=ENTRY_WIDTH, exportselection=0, textvariable=var_dict['tracker'])
 input_dict['tracker'].grid(row=m, column=1)
+default_dict['tracker'] = 'Optional, will start Dunka\'s tracker if empty'
 
 btn_dict['tracker'] = tk.Button(frm_dict['misc'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['tracker'], input_dict['tracker'], 'file'))
 btn_dict['tracker'].grid(row=m, column=2)
@@ -191,6 +172,7 @@ lbl_dict['usbinterface'].grid(row=m, column=0)
 var_dict['usbinterface'] = tk.StringVar()
 input_dict['usbinterface'] = tk.Entry(frm_dict['misc'], width=ENTRY_WIDTH, exportselection=0, textvariable=var_dict['usbinterface'])
 input_dict['usbinterface'].grid(row=m, column=1)
+default_dict['usbinterface'] = 'SNI required if FXPak/SD2SNES, otherwise optional'
 
 btn_dict['usbinterface'] = tk.Button(frm_dict['misc'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['usbinterface'], input_dict['usbinterface'], 'file'))
 btn_dict['usbinterface'].grid(row=m, column=2)
@@ -242,64 +224,78 @@ frm_dict['dunkatracker'].grid(row=n, sticky=tk.W+tk.E)
 input_dict['dunkatracker'] = {}
 var_dict['dunkatracker'] = {}
 
-frm_dict['dunkatoggle'] = tk.Frame(frm_dict['dunkatracker'], bd=2)
-frm_dict['dunkatoggle'].grid(row=0, sticky=tk.W)
+frm_dict['dunkarow1'] = tk.Frame(frm_dict['dunkatracker'], bd=2)
+frm_dict['dunkarow1'].grid(row=0, sticky=tk.W)
 
 # Door tracker
-var_dict['dunkatracker']['door'] = tk.IntVar()
-input_dict['dunkatracker']['door'] = tk.Checkbutton(frm_dict['dunkatoggle'], text='Door', variable=var_dict['dunkatracker']['door'], onvalue=1, offvalue=0)
+lbl_dict['door'] = tk.Label(frm_dict['dunkarow1'], text='Door Rando', width=LBL_WIDTH)
+lbl_dict['door'].grid(row=0, column=m)
+
+m += 1
+
+var_dict['dunkatracker']['door'] = tk.StringVar()
+var_dict['dunkatracker']['door'].set('None')
+input_dict['dunkatracker']['door'] = tk.OptionMenu(frm_dict['dunkarow1'], var_dict['dunkatracker']['door'], *['None', 'Basic', 'Crossed/Keydrop'])
+input_dict['dunkatracker']['door'].config(width=BTN_WIDTH+2)
 input_dict['dunkatracker']['door'].grid(row=0, column=m)
 
 m += 1
 
 # Overworld tracker
-var_dict['dunkatracker']['overworld'] = tk.IntVar()
-input_dict['dunkatracker']['overworld'] = tk.Checkbutton(frm_dict['dunkatoggle'], text='Overworld', variable=var_dict['dunkatracker']['overworld'], onvalue=1, offvalue=0)
+lbl_dict['overworld'] = tk.Label(frm_dict['dunkarow1'], text='Overworld Rando', width=LBL_WIDTH)
+lbl_dict['overworld'].grid(row=0, column=m)
+
+m += 1
+
+var_dict['dunkatracker']['overworld'] = tk.StringVar()
+var_dict['dunkatracker']['overworld'].set('None')
+input_dict['dunkatracker']['overworld'] = tk.OptionMenu(frm_dict['dunkarow1'], var_dict['dunkatracker']['overworld'], *['None', 'Mixed/Crossed/Misc', 'Parallel', 'Full'])
+input_dict['dunkatracker']['overworld'].config(width=BTN_WIDTH+6)
 input_dict['dunkatracker']['overworld'].grid(row=0, column=m)
 
 m += 1
 
 # Sphere tracker
 var_dict['dunkatracker']['sphere'] = tk.IntVar()
-input_dict['dunkatracker']['sphere'] = tk.Checkbutton(frm_dict['dunkatoggle'], text='Sphere', variable=var_dict['dunkatracker']['sphere'], onvalue=1, offvalue=0)
+input_dict['dunkatracker']['sphere'] = tk.Checkbutton(frm_dict['dunkarow1'], text='Sphere', variable=var_dict['dunkatracker']['sphere'], onvalue=1, offvalue=0)
 input_dict['dunkatracker']['sphere'].grid(row=0, column=m)
 
-m += 1
-
-# Autotracker
-var_dict['dunkatracker']['autotracker'] = tk.IntVar()
-input_dict['dunkatracker']['autotracker'] = tk.Checkbutton(frm_dict['dunkatoggle'], text='Autotracker', variable=var_dict['dunkatracker']['autotracker'], onvalue=1, offvalue=0)
-input_dict['dunkatracker']['autotracker'].grid(row=0, column=m)
-
 m = 0
-frm_dict['dunkamap'] = tk.Frame(frm_dict['dunkatracker'], bd=2)
-frm_dict['dunkamap'].grid(row=1, sticky=tk.W)
+frm_dict['dunkarow2'] = tk.Frame(frm_dict['dunkatracker'], bd=2)
+frm_dict['dunkarow2'].grid(row=1, sticky=tk.W)
 
 # Map tracker
-lbl_dict['mapdisplay'] = tk.Label(frm_dict['dunkamap'], text='Map display', width=BTN_WIDTH)
-lbl_dict['mapdisplay'].grid(row=1, column=m)
+lbl_dict['mapdisplay'] = tk.Label(frm_dict['dunkarow2'], text='Map display', width=LBL_WIDTH)
+lbl_dict['mapdisplay'].grid(row=0, column=m)
 
 m += 1
 
 var_dict['dunkatracker']['mapdisplay'] = tk.StringVar()
 var_dict['dunkatracker']['mapdisplay'].set('None')
-input_dict['dunkatracker']['mapdisplay'] = tk.OptionMenu(frm_dict['dunkamap'], var_dict['dunkatracker']['mapdisplay'], *['None', 'Normal', 'Compact'])
-input_dict['dunkatracker']['mapdisplay'].config(width=BTN_WIDTH)
-input_dict['dunkatracker']['mapdisplay'].grid(row=1, column=m)
+input_dict['dunkatracker']['mapdisplay'] = tk.OptionMenu(frm_dict['dunkarow2'], var_dict['dunkatracker']['mapdisplay'], *['None', 'Normal', 'Compact'])
+input_dict['dunkatracker']['mapdisplay'].config(width=BTN_WIDTH+2)
+input_dict['dunkatracker']['mapdisplay'].grid(row=0, column=m)
 
 m += 1
 
 # Map logic
-lbl_dict['maplogic'] = tk.Label(frm_dict['dunkamap'], text='Map logic', width=BTN_WIDTH)
-lbl_dict['maplogic'].grid(row=1, column=m)
+lbl_dict['maplogic'] = tk.Label(frm_dict['dunkarow2'], text='Map logic', width=LBL_WIDTH)
+lbl_dict['maplogic'].grid(row=0, column=m)
 
 m += 1
 
 var_dict['dunkatracker']['maplogic'] = tk.StringVar()
 var_dict['dunkatracker']['maplogic'].set('No Glitches')
-input_dict['dunkatracker']['maplogic'] = tk.OptionMenu(frm_dict['dunkamap'], var_dict['dunkatracker']['maplogic'], *['No Glitches', 'OWG', 'MG / No Logic'])
-input_dict['dunkatracker']['maplogic'].config(width=BTN_WIDTH)
-input_dict['dunkatracker']['maplogic'].grid(row=1, column=m)
+input_dict['dunkatracker']['maplogic'] = tk.OptionMenu(frm_dict['dunkarow2'], var_dict['dunkatracker']['maplogic'], *['No Glitches', 'OWG', 'MG/No Logic'])
+input_dict['dunkatracker']['maplogic'].config(width=BTN_WIDTH+6)
+input_dict['dunkatracker']['maplogic'].grid(row=0, column=m)
+
+m += 1
+
+# Autotracker
+var_dict['dunkatracker']['autotracker'] = tk.IntVar()
+input_dict['dunkatracker']['autotracker'] = tk.Checkbutton(frm_dict['dunkarow2'], text='Autotracker', variable=var_dict['dunkatracker']['autotracker'], onvalue=1, offvalue=0)
+input_dict['dunkatracker']['autotracker'].grid(row=0, column=m)
 
 n += 1
 
@@ -494,18 +490,15 @@ for child in frm_dict['gameoptions'].winfo_children():
 for child in frm_dict['sprites'].winfo_children():
     child.configure(state='disabled')
 
-utils.set_default_text(input_dict['emulator'], 'Optional')
-utils.set_default_text(input_dict['msupath'], 'Seed will be written there if no MSU is used')
-utils.set_default_text(input_dict['timer'], 'Optional')
-utils.set_default_text(input_dict['tracker'], 'Optional, will start Dunka\'s tracker if empty and tracker autostart is checked')
-utils.set_default_text(input_dict['usbinterface'], 'SNI required if using USB transfer, otherwise optional')
+for x in default_dict:
+    utils.set_default_text(input_dict[x], default_dict[x])
 
 if var_dict['mode'].get() == 0:
     utils.switch_frame(frm_dict['transfer'].winfo_children(), frm_dict['copy'].winfo_children())
 else:
     utils.switch_frame(frm_dict['copy'].winfo_children(), frm_dict['transfer'].winfo_children())
 
-btn_dict['run'].config(command=lambda: utils.run(var_dict, input_dict['fxpakfolders'], lbl_dict['log']))
+btn_dict['run'].config(command=lambda: utils.run(var_dict, input_dict['fxpakfolders'], default_dict, lbl_dict['log']))
 btn_dict['detect'].config(command=lambda: transfer.detect_fxpak(var_dict['usbinterface'], input_dict['fxpakfolders'], var_dict['uri'], lbl_dict['detect']))
 
 # sprites.build_dict()
