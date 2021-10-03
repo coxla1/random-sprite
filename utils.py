@@ -385,7 +385,7 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
         if 'name' in settings:
             if 'Potpourri' in settings['name']:
                 shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '0', '0', '1', '1'
-            log.config('You may have to adjust settings using the ? icon in the top-left corner')
+            log.config(text='You may have to adjust settings using the flag icon in the top-left corner')
 
         if settings['logic'] == 'NoLogic':
             shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = '1', '1', '1', '1'

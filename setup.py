@@ -16,11 +16,11 @@ build_exe_options = {
 # GUI applications require a different base on Windows (the default is for
 # a console application).
 base = None
-if sys.platform == 'win32':
-    base = 'Win32GUI'
+# if sys.platform == 'win32':
+#     base = 'Win32GUI'
 
 setup(  name = 'ALTTPR Helper',
-        version = '2.1',
+        version = '2.1.1',
         description = 'Helper to rename seed according to MSU and to start side programs',
         options = {'build_exe': build_exe_options},
         executables = [Executable('gui.py', base=base, icon='data/icon.ico', target_name='Helper')])
