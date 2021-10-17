@@ -210,7 +210,7 @@ def run(vars, input_fxpakfolders, default, log):
 
 
         except:
-            log.config(text='An error occured while writing to destination folder, if using USB transfer consider turning SNES OFF/ON')
+            log.config(text='An error occured while writing the ROM, if using USB transfer consider turning SNES OFF/ON and detect FXPak one more time')
 
         # Boot ROM
         if vars['autostart']['boot'].get() and vars['seed'].get():
@@ -349,6 +349,7 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
         shuffledcompasses = '1'
         shuffledsmallkeys = '1'
         shuffledbigkeys = '1'
+        shopsanity = 'N'
         ambrosia = 'N'
         overworld = {'None': 'N', 'Mixed/Crossed/Misc': 'O', 'Parallel': 'P', 'Full': 'F'}[vars['dunkatracker']['overworld'].get()]
         autotracking = {0: 'N', 1: 'Y'}[vars['dunkatracker']['autotracker'].get()]
@@ -381,6 +382,7 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
         door = {'None': 'N', 'Basic': 'B', 'Crossed/Keydrop': 'C'}[vars['dunkatracker']['door'].get()]
 
         shuffledmaps, shuffledcompasses, shuffledsmallkeys, shuffledbigkeys = {'standard': ('0', '0', '0', '0'), 'mc': ('1', '1', '0', '0'), 'mcs': ('1', '1', '1', '0'), 'full': ('1', '1', '1', '1')}[settings['dungeon_items']]
+        shopsanity = {0: 'N', 1: 'Y'}[vars['dunkatracker']['shopsanity'].get()]
 
         if 'name' in settings:
             if 'Potpourri' in settings['name']:
@@ -406,12 +408,13 @@ def dunka_url(vars, log, settings={'spoilers': 'mystery'}):
     newvar = []
     while flag:
         try:
-            url = 'https://alttptracker.dunka.net/{:}'.format(eval(urlformat))
+            url = 'https://alttprtracker.dunka.net/{:}'.format(eval(urlformat))
             flag = False
         except NameError as e:
-            i = e[6:].index('\'')
-            newvar.append(e[6:6+i])
-            eval('{:} = \'N\''.format(e[6:6+i]))
+            varname = str(e)[6:]
+            i = varname.index('\'')
+            newvar.append(varname[:i])
+            exec('{:} = \'N\''.format(varname[:i]))
 
     for x in newvar:
         print(f'Dunka\'s tracker new variable: {x}')

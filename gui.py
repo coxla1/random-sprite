@@ -297,6 +297,15 @@ var_dict['dunkatracker']['autotracker'] = tk.IntVar()
 input_dict['dunkatracker']['autotracker'] = tk.Checkbutton(frm_dict['dunkarow2'], text='Autotracker', variable=var_dict['dunkatracker']['autotracker'], onvalue=1, offvalue=0)
 input_dict['dunkatracker']['autotracker'].grid(row=0, column=m)
 
+m = 0
+frm_dict['dunkarow3'] = tk.Frame(frm_dict['dunkatracker'], bd=2)
+frm_dict['dunkarow3'].grid(row=2, sticky=tk.W)
+
+# Shopsanity
+var_dict['dunkatracker']['shopsanity'] = tk.IntVar()
+input_dict['dunkatracker']['shopsanity'] = tk.Checkbutton(frm_dict['dunkarow3'], text='Shopsanity', variable=var_dict['dunkatracker']['shopsanity'], onvalue=1, offvalue=0)
+input_dict['dunkatracker']['shopsanity'].grid(row=0, column=m)
+
 n += 1
 
 ## Postgen options
@@ -474,7 +483,7 @@ btn_dict['run'].grid(row=n)
 
 n += 1
 
-lbl_dict['log'] = tk.Label(window, text='', anchor=tk.W, width=ENTRY_WIDTH)
+lbl_dict['log'] = tk.Label(window, text='', anchor=tk.W, width=80)
 lbl_dict['log'].grid(row=n, sticky=tk.W)
 
 ## Loading
