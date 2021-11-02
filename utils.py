@@ -150,7 +150,6 @@ def run(vars, input_fxpakfolders, default, log):
         hash = seed_hash(vars['seed'])
         print(f'Seed hash: {hash}')
         settings = seed_settings(hash)
-        # settings = asyncio.run(seed_settings(hash))
         if settings:
             print('Found settings:')
             for x in settings['meta']:
@@ -179,7 +178,7 @@ def run(vars, input_fxpakfolders, default, log):
                 else: # Copy
                     destination_folder = vars['msupath'].get()
 
-                filename = 'seed.sfc'
+                filename = 'seed'
 
             else:
                 if vars['mode'].get() == 0: # Transfer
@@ -189,13 +188,20 @@ def run(vars, input_fxpakfolders, default, log):
                     destination_folder = '{:}{:}{:}'.format(vars['msupath'].get(), os.sep, msu)
                     filename = ''
                     for f in os.listdir(destination_folder)[::-1]:
-                        if f[-4:] == '.msu':
-                            filename = f[:-4] + '.sfc'
+                        if f[-4:] == '.pcm':
+                            i = f[::-1].index('-')
+                            filename = f[::-1][i+1:][::-1]
                             break
 
                 if filename == '':
-                    log.config(text='Could not find .msu file in the pack directory')
+                    log.config(text='No file found in the MSU directory')
                     return -1
+
+                open(f'{destination_folder}{os.sep}{filename}.msu', 'w').close()
+
+                if 'retroarch.exe' in vars['emulator'].get():
+                    create_manifest(filename, destination_folder)
+
 
             print(f'MSU: {msu}')
 
@@ -204,20 +210,27 @@ def run(vars, input_fxpakfolders, default, log):
             print(f'Filename: {filename}')
 
             if vars['mode'].get() == 0: # Transfer
-                transfer.send_rom(vars['seed'].get(), vars['uri'].get(), f'{destination_folder}/{filename}')
+                transfer.send_rom(vars['seed'].get(), vars['uri'].get(), f'{destination_folder}/{filename}.sfc')
             else: # Copy
-                shutil.copy(vars['seed'].get(), f'{destination_folder}{os.sep}{filename}')
+                shutil.copy(vars['seed'].get(), f'{destination_folder}{os.sep}{filename}.sfc')
 
 
         except:
-            log.config(text='An error occured while writing the ROM, if using USB transfer consider turning SNES OFF/ON and detect FXPak one more time')
+            log.config(text='Could not write ROM, if using USB transfer try rebooting SNES and detect FXPak again')
 
         # Boot ROM
         if vars['autostart']['boot'].get() and vars['seed'].get():
             if vars['mode'].get() == 0: # Transfer
-                transfer.boot_rom(vars['uri'].get(), f'{destination_folder}/{filename}')
+                transfer.boot_rom(vars['uri'].get(), f'{destination_folder}/{filename}.sfc')
             elif vars['emulator'].get() != default['emulator']: # Copy
-                thread_emu = thread('"{:}" "{:}"'.format(vars['emulator'].get(), f'{destination_folder}{os.sep}{filename}'))
+                if 'retroarch.exe' in vars['emulator'].get():
+                    if vars['retroarchcore'].get() != default['retroarchcore']:
+                        thread_emu = thread('"{:}" -L "{:}" "{:}"'.format(vars['emulator'].get(), vars['retroarchcore'].get(), f'{destination_folder}{os.sep}{filename}.bml'))
+                    else:
+                        thread_emu = thread('"{:}"'.format(vars['emulator'].get()))
+                else:
+                    thread_emu = thread('"{:}" "{:}"'.format(vars['emulator'].get(), f'{destination_folder}{os.sep}{filename}.sfc'))
+
                 thread_emu.start()
 
     # Timer
@@ -552,3 +565,28 @@ def set_default_text(entry, text):
         entry.insert(0, text)
     if entry.get() == text:
         entry.config(fg = 'grey')
+
+def create_manifest(name, path):
+    f = open(f'{path}{os.sep}{name}.bml', 'w')
+
+    f.write('cartridge region=NTSC\n')
+    f.write(f'  rom name={name}.sfc size=0x200000\n')
+    f.write(f'  ram name={name}.srm size=0x8000\n')
+    f.write('  map id=rom address=00-ff:8000-ffff mask=0x8000\n')
+    f.write('  map id=rom address=40-6f,c0-ef:0000-7fff mask=0x8000\n')
+    f.write('  map id=ram address=70-7d,f0-ff:0000-ffff\n\n')
+
+    f.write('  msu1\n')
+    f.write(f'    rom name={name}.name size=0x0000\n')
+    f.write(f'    map id=io address=00-3f,80-bf:2000-2007\n')
+
+    for x in range(1,62):
+        f.write(f'    track number={x} name={name}-{x}.pcm\n')
+
+    f.write('\ninformation\n')
+    f.write('  title: A Link to the Past Randomizer v31\n')
+    f.write('  configuration\n')
+    f.write(f'    rom name={name}.sfc size=0x200000\n')
+    f.write(f'    ram name={name}.srm size=0x2000')
+
+    f.close()

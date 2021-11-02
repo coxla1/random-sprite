@@ -20,7 +20,7 @@ base = None
 #     base = 'Win32GUI'
 
 setup(  name = 'ALTTPR Helper',
-        version = '2.1.1',
+        version = '2.2',
         description = 'Helper to rename seed according to MSU and to start side programs',
         options = {'build_exe': build_exe_options},
         executables = [Executable('gui.py', base=base, icon='data/icon.ico', target_name='Helper')])

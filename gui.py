@@ -4,8 +4,9 @@ import transfer
 # import sprites
 
 # TODO : debug print picked options when this will be back
-# TODO : fix (?) check process tracker : I can't because that would mean checking if msedge is running, which might be the case
 # TODO : sprites
+# TODO : text len if SNES bug
+# TODO : exclude everything that is not a folder when scanning MSU dir (maybe)
 
 window = tk.Tk()
 
@@ -116,6 +117,7 @@ default_dict['emulator'] = 'Optional'
 
 btn_dict['emulator'] = tk.Button(frm_dict['copy'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['emulator'], input_dict['emulator'], 'file'))
 btn_dict['emulator'].grid(row=m, column=2)
+
 m += 1
 
 # MSU
@@ -129,6 +131,20 @@ default_dict['msupath'] = 'Seed will be written there if default music used'
 
 btn_dict['msupath'] = tk.Button(frm_dict['copy'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['msupath'], input_dict['msupath'], 'dir'))
 btn_dict['msupath'].grid(row=m, column=2)
+
+m += 1
+
+# RetroArch core
+lbl_dict['retroarchcore'] = tk.Label(frm_dict['copy'], text='RetroArch Core', width=LBL_WIDTH, anchor=tk.W)
+lbl_dict['retroarchcore'].grid(row=m, column=0)
+
+var_dict['retroarchcore'] = tk.StringVar()
+input_dict['retroarchcore'] = tk.Entry(frm_dict['copy'], width=ENTRY_WIDTH, exportselection=0, textvariable=var_dict['retroarchcore'])
+input_dict['retroarchcore'].grid(row=m, column=1)
+default_dict['retroarchcore'] = 'Optional'
+
+btn_dict['retroarchcore'] = tk.Button(frm_dict['copy'], text='...', width=BTN_WIDTH, command=lambda: utils.set_path(var_dict['retroarchcore'], input_dict['retroarchcore'], 'file'))
+btn_dict['retroarchcore'].grid(row=m, column=2)
 
 n += 1
 
